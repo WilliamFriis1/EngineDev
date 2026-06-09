@@ -1,2 +1,11 @@
 ##Directories
 cmake-4.3.3/
+
+##VS / cmake
+build/
+CMakeCache.txt
+CMakeFiles/
+*.user
+.vs/
+.idea/
+.vscode/
