@@ -3,7 +3,10 @@
 #
 
 # Add source to this project's executable.
-add_executable (VulkanEngine "src/main")
+add_executable (VulkanEngine 
+	"src/Sandbox/main.cpp"
+	"src/Engine/VulkanEngine.cpp"
+	"src/Engine/Rendering/SwapChain.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET VulkanEngine PROPERTY CXX_STANDARD 20)
@@ -21,3 +24,5 @@ FetchContent_Declare(glfw GIT_REPOSITORY https://github.com/glfw/glfw.git GIT_TA
 FetchContent_MakeAvailable(glfw)
 
 target_link_libraries(VulkanEngine PRIVATE glfw)
+
+target_include_directories(VulkanEngine PRIVATE src)
