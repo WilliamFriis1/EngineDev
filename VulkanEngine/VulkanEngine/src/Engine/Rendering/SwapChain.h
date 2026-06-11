@@ -9,9 +9,7 @@ class SwapChain
 {
 private:
 
-	VkDevice device = VK_NULL_HANDLE;
-	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-	VkSurfaceKHR surface = VK_NULL_HANDLE;
+public:
 
 	struct SwapChainSupportDetails
 	{
@@ -20,8 +18,8 @@ private:
 		std::vector<VkPresentModeKHR> presentModes;
 	};
 
-	SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+	SwapChain() = default;
+	~SwapChain() = default;
 
-public:
-	SwapChain(VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface) : device(device), physicalDevice(physicalDevice), surface(surface){}
+	SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR);
 };

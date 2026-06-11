@@ -131,7 +131,6 @@ void VulkanEngine::selectPhysicalDevice()
 		throw std::runtime_error("Failed to find physical devices!\n");
 
 	std::vector<VkPhysicalDevice> devices(deviceCount);
-
 	vkEnumeratePhysicalDevices(vkInstance, &deviceCount, devices.data());
 
 	std::cout << "Found: " << deviceCount << " physical devices.\n";
@@ -148,9 +147,12 @@ void VulkanEngine::selectPhysicalDevice()
 	{
 		physicalDevice = device;
 
+		auto swapSupportDetails = swapChain.querySwapChainSupport(device, surface);
+		auto extentionsSupported = checkDeviceExtentionSupport();
+
 		auto indices = findQueueFamilies();
 
-		if (indices.isComplete())
+		if (indices.isComplete() && !swapSupportDetails.formats.empty() && !swapSupportDetails.presentModes.empty() && extentionsSupported)
 		{
 			queueFamilyIndices = indices;
 			return;
@@ -221,22 +223,35 @@ bool VulkanEngine::checkValidationLayerSupport()
 
 	for (const char* layerName : validationLayers)
 	{
-		bool layerFound = false;
-
 		for (const auto& layerProperties : availableLayers)
 		{
 			if (strcmp(layerName, layerProperties.layerName) == 0)
-			{
-				layerFound = true;
-				break;
-			}
+				return true;
 		}
-
-		if (!layerFound)
-			return false;
 	}
 
-	return true;
+	return false;
+}
+
+bool VulkanEngine::checkDeviceExtentionSupport()
+{
+	uint32_t extensionCount;
+	vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionCount, nullptr);
+
+	std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+	vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionCount, availableExtensions.data());
+
+	for (auto& extensionName : deviceExtensions)
+	{
+		for (auto& extentionProperty : availableExtensions)
+		{
+			if (strcmp(extensionName, extentionProperty.extensionName) == 0)
+				return true;
+		}
+	}
+
+	return false;
+
 }
 
 VulkanEngine::QueueFamilyIndices VulkanEngine::findQueueFamilies()
@@ -273,13 +288,12 @@ VulkanEngine::QueueFamilyIndices VulkanEngine::findQueueFamilies()
 			indices.presentFamily = i;
 
 		if (indices.isComplete())
-			break;
+			return indices;
 
 		i++;
 	}
 
-	return indices;
-
+	throw std::runtime_error("No device supports graphics and present queue families!\n");
 }
 
 // _____________Public_____________

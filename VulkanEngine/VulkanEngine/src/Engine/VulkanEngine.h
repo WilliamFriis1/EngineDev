@@ -1,5 +1,6 @@
 ﻿#include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
+#include "Engine/Rendering/SwapChain.h"
 
 #include <iostream>
 #include <vector>
@@ -32,6 +33,13 @@ private:
 		"VK_LAYER_KHRONOS_validation"
 	};
 
+	const std::vector<const char*> deviceExtensions =
+	{
+		VK_KHR_SWAPCHAIN_EXTENSION_NAME
+	};
+
+	SwapChain swapChain{};
+
 	GLFWwindow* window = nullptr;
 	VkInstance vkInstance = VK_NULL_HANDLE;
 	VkSurfaceKHR surface = VK_NULL_HANDLE;
@@ -58,6 +66,7 @@ private:
 	void drawFrame();
 
 	bool checkValidationLayerSupport();
+	bool checkDeviceExtentionSupport();
 	QueueFamilyIndices findQueueFamilies();
 
 public:
