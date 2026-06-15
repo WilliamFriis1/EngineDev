@@ -1,5 +1,5 @@
 # EngineDevelopment
-## Sideproject aimed to improve my understanding and skills of Vulkan and game engine architechture.
+## Sideproject aimed to improve my understanding Vulkan and game engine architechture.
 
 I'm a Game Dev bachelor graduate looking to deepen my understanding of game engine architecture through the creation of my own engine.
 
