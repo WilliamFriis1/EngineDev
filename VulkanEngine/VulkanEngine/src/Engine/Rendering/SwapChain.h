@@ -44,10 +44,17 @@ public:
 		VK_KHR_SWAPCHAIN_EXTENSION_NAME
 	};
 
+	//Getters
+	VkFormat getImageFormat() const;
+	VkExtent2D getExtents() const;
+	std::vector<VkImageView> getImageViews() const;
+
+
 	SwapChain() = default;
 	~SwapChain() = default;
 
 	void create(VkPhysicalDevice physicalDevice, VkDevice device, VkSurfaceKHR surface, GLFWwindow* window, uint32_t graphicsFamily, uint32_t presentFamily, const SwapChainSupportDetails &details);
+
 	void cleanup(VkDevice device);
 
 	DeviceSuitability isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface);

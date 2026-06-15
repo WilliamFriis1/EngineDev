@@ -29,6 +29,7 @@ void VulkanEngine::windowInit()
 void VulkanEngine::vulkanInit()
 {
 	createInstance();
+	debugMessenger.setupDebugMessenger(vkInstance);
 	createSurface();
 	selectPhysicalDevice();
 	createLogicalDevice();
@@ -42,6 +43,16 @@ void VulkanEngine::vulkanInit()
 		queueFamilyIndices.graphicsFamily.value(), 
 		queueFamilyIndices.presentFamily.value(),
 		swapChainSupportDetails
+	);
+
+	renderPass.create(device, swapChain.getImageFormat());
+
+	framebufferManager.createFramebuffers
+	(
+		device,
+		renderPass.get(),
+		swapChain.getImageViews(),
+		swapChain.getExtents()
 	);
 }
 
@@ -110,7 +121,16 @@ void VulkanEngine::createInstance()
 		createInfo.enabledLayerCount = 0;
 	}
 
-	VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
+	VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
+
+	debugCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+
+	debugCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+	debugCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+
+	debugCreateInfo.pfnUserCallback = DebugMessenger::VulkanDebugCallback;
+
+	createInfo.pNext = &debugCreateInfo;
 
 	if (enableValidationLayers && !checkValidationLayerSupport())
 	{
@@ -123,6 +143,9 @@ void VulkanEngine::createInstance()
 	}
 
 	std::cout << "Vulkan instance created!\n";
+
+
+
 }
 
 void VulkanEngine::createSurface()
@@ -299,9 +322,15 @@ VulkanEngine::QueueFamilyIndices VulkanEngine::findQueueFamilies(VkPhysicalDevic
 // _____________Public_____________
 VulkanEngine::~VulkanEngine()
 {
+	framebufferManager.cleanupFramebuffers(device);
+	renderPass.cleanup(device);
 	swapChain.cleanup(device);
+
 	cleanupDevice();
 	cleanupSurface();
+
+	debugMessenger.cleanupDebugMessenger(vkInstance);
+
 	cleanupVulkan();
 	cleanupGlfw();
 }

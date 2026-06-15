@@ -103,7 +103,25 @@ bool SwapChain::checkDeviceExtensionSupport(VkPhysicalDevice device)
 
 }
 
+
+
 // _____________Public_____________
+
+VkFormat SwapChain::getImageFormat() const
+{
+	return imageFormat;
+}
+
+VkExtent2D SwapChain::getExtents() const
+{
+	return extent;
+}
+
+std::vector<VkImageView> SwapChain::getImageViews() const
+{
+	return imageViews;
+}
+
 void SwapChain::create(VkPhysicalDevice physicalDevice, VkDevice device, VkSurfaceKHR surface, GLFWwindow* window, uint32_t graphicsFamily, uint32_t presentFamily, const SwapChainSupportDetails &details)
 {
 	auto surfaceFormat = chooseSurfaceFormat(details.formats);
@@ -166,11 +184,11 @@ void SwapChain::create(VkPhysicalDevice physicalDevice, VkDevice device, VkSurfa
 
 	vkGetSwapchainImagesKHR(device, swapChain, &imageCounter, nullptr);
 
-	images.resize(imageCount);
+	images.resize(imageCounter);
 
 	vkGetSwapchainImagesKHR(device, swapChain, &imageCounter, images.data());
 
-	std::cout << "Retrieved " << imageCount << " swapchain images\n";
+	std::cout << "Retrieved " << imageCounter << " swapchain images\n";
 
 	createImageViews(device);
 }
@@ -184,9 +202,6 @@ void SwapChain::cleanup(VkDevice device)
 
 	vkDestroySwapchainKHR(device, swapChain, nullptr);
 }
-
-
-
 
 DeviceSuitability SwapChain::isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface)
 {

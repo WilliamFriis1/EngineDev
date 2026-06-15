@@ -7,7 +7,9 @@ add_executable (VulkanEngine
 	"src/Sandbox/main.cpp"
 	"src/Engine/VulkanEngine.cpp"
 	"src/Engine/Rendering/SwapChain.cpp" 
-	"src/Engine/Rendering/RenderPass.cpp")
+	"src/Engine/Rendering/RenderPass.cpp" 
+	"src/Engine/Rendering/FramebufferManager.cpp" 
+	"src/Utility/DebugMessenger.h")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET VulkanEngine PROPERTY CXX_STANDARD 20)

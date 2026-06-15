@@ -10,6 +10,8 @@ private:
 	VkRenderPass renderPass = VK_NULL_HANDLE;
 
 public:
+	
+	VkRenderPass get() const;
 
 	void create(VkDevice device, VkFormat swapchainFormat);
 	void cleanup(VkDevice device);

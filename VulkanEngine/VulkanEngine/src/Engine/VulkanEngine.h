@@ -1,6 +1,11 @@
 ﻿#include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
+
 #include "Engine/Rendering/SwapChain.h"
+#include "Engine/Rendering/RenderPass.h"
+#include "Engine/Rendering/FramebufferManager.h"
+
+#include "Utility/DebugMessenger.h"
 
 #include <iostream>
 #include <vector>
@@ -34,6 +39,10 @@ private:
 	};
 
 	SwapChain swapChain{};
+	RenderPass renderPass{};
+	FramebufferManager framebufferManager{};
+	DebugMessenger debugMessenger{};
+
 	SwapChainSupportDetails swapChainSupportDetails;
 
 	GLFWwindow* window = nullptr;
@@ -66,7 +75,7 @@ private:
 
 public:
 
-	VulkanEngine() noexcept = default;
+	VulkanEngine() = default;
 	~VulkanEngine();
 
 	VulkanEngine(VulkanEngine&) = delete;
