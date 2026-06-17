@@ -56,24 +56,37 @@ private:
 
 	QueueFamilyIndices queueFamilyIndices;
 
+	//Initialization
 	void windowInit();
 	void vulkanInit();
 
+	//Cleanup
 	void cleanupGlfw();
 	void cleanupVulkan();
 	void cleanupSurface();
 	void cleanupDevice();
 
+	//Create
 	void createInstance();
 	void createSurface();
 	void selectPhysicalDevice();
 	void createLogicalDevice();
+
+	//Update
 	void drawFrame();
 
+	//Utility
 	bool checkValidationLayerSupport();
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
+	void recreateSwapChain();
+
+	//Callback
+	static void glfwFramebufferResized(GLFWwindow* window, int width, int height);
+
 public:
+
+	bool isFramebufferResized = false;
 
 	VulkanEngine() = default;
 	~VulkanEngine();
@@ -86,4 +99,5 @@ public:
 
 	void init();
 	void run();
+
 };

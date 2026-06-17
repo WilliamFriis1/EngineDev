@@ -9,7 +9,8 @@ add_executable (VulkanEngine
 	"src/Engine/Rendering/SwapChain.cpp" 
 	"src/Engine/Rendering/RenderPass.cpp" 
 	"src/Engine/Rendering/FramebufferManager.cpp" 
-	"src/Utility/DebugMessenger.h")
+	"src/Utility/DebugMessenger.h" 
+	"src/Engine/Rendering/GraphicsPipeline.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET VulkanEngine PROPERTY CXX_STANDARD 20)

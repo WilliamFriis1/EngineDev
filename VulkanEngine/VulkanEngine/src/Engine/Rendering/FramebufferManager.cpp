@@ -25,8 +25,9 @@ void FramebufferManager::createFramebuffers(VkDevice device, VkRenderPass render
 			throw std::runtime_error("Failed to create framebuffer!\n");
 		}
 
-		std::cout << "Successfully created framebuffers!\n";
 	}
+
+	std::cout << "Successfully created framebuffers: " << framebuffers.size() << "!\n";
 }
 
 void FramebufferManager::cleanupFramebuffers(VkDevice device)

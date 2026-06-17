@@ -1,6 +1,7 @@
 ﻿#include "VulkanEngine.h"
 
 // _____________Private_____________
+
 void VulkanEngine::windowInit()
 {
 	if (!glfwInit())
@@ -24,6 +25,10 @@ void VulkanEngine::windowInit()
 	}
 
 	std::cout << "Window created successfully!\n";
+
+	glfwSetWindowUserPointer(window, this);
+
+	glfwSetFramebufferSizeCallback(window, VulkanEngine::glfwFramebufferResized);
 }
 
 void VulkanEngine::vulkanInit()
@@ -97,6 +102,8 @@ void VulkanEngine::createInstance()
 	if (!glfwExtensions)
 		throw std::runtime_error("Failed to get GLFW Vulkan extensions");
 
+	std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+
 	VkApplicationInfo appInfo{};
 	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	appInfo.pApplicationName = "VulkanEngine";
@@ -115,11 +122,16 @@ void VulkanEngine::createInstance()
 	{
 		createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
 		createInfo.ppEnabledLayerNames = validationLayers.data();
+
+		extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 	}
 	else
 	{
 		createInfo.enabledLayerCount = 0;
 	}
+
+	createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+	createInfo.ppEnabledExtensionNames = extensions.data();
 
 	VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
 
@@ -130,7 +142,10 @@ void VulkanEngine::createInstance()
 
 	debugCreateInfo.pfnUserCallback = DebugMessenger::VulkanDebugCallback;
 
-	createInfo.pNext = &debugCreateInfo;
+	if (enableValidationLayers)
+		createInfo.pNext = &debugCreateInfo;
+	else
+		createInfo.pNext = nullptr;
 
 	if (enableValidationLayers && !checkValidationLayerSupport())
 	{
@@ -143,9 +158,6 @@ void VulkanEngine::createInstance()
 	}
 
 	std::cout << "Vulkan instance created!\n";
-
-
-
 }
 
 void VulkanEngine::createSurface()
@@ -319,6 +331,43 @@ VulkanEngine::QueueFamilyIndices VulkanEngine::findQueueFamilies(VkPhysicalDevic
 	return indices;
 }
 
+void VulkanEngine::recreateSwapChain()
+{
+	std::cout << "Started recreation of swapchain...\n";
+	vkDeviceWaitIdle(device);
+
+	framebufferManager.cleanupFramebuffers(device);
+	swapChain.cleanup(device);
+
+	swapChainSupportDetails = swapChain.isDeviceSuitable(physicalDevice, surface).swapChainSupport;
+
+	swapChain.create
+	(
+		physicalDevice,
+		device,
+		surface,
+		window,
+		queueFamilyIndices.graphicsFamily.value(),
+		queueFamilyIndices.presentFamily.value(),
+		swapChainSupportDetails
+	);
+
+	framebufferManager.createFramebuffers
+	(
+		device,
+		renderPass.get(),
+		swapChain.getImageViews(),
+		swapChain.getExtents()
+	);
+}
+
+void VulkanEngine::glfwFramebufferResized(GLFWwindow* window, int width, int height)
+{
+	auto engine = static_cast<VulkanEngine*>(glfwGetWindowUserPointer(window));
+
+	engine->isFramebufferResized = true;
+}
+
 // _____________Public_____________
 VulkanEngine::~VulkanEngine()
 {
@@ -348,3 +397,5 @@ void VulkanEngine::run()
 		glfwPollEvents();
 	}
 }
+
+
