@@ -31,7 +31,7 @@ The basic Vulkan setup is getting close to completion, missing a few key compone
 - Graphics pipeline
 - Synochronization
 
-##### Todays implementations
+##### Todays work
 - Completed initial render pass implementation
 - Added framebuffer for the swapchain
 - Implemented debug messenger for validation layer debugging
@@ -39,7 +39,7 @@ The basic Vulkan setup is getting close to completion, missing a few key compone
 #### 17/06 - 2026
 Graphics pipeline coming along. Once finished, command buffers is the next step.
 
-#### Todays implementations
+#### Todays work
 - Implemented dynamic rebuilding of the swapchain incase of changes in framebuffer. It is prepared to run on vulkan failures once relevant.
 - Error handling for debug messenger, extensions were not enabled.
 - Implemented simple vertex- and frag shaders. 
