@@ -4,8 +4,12 @@
 #include "Engine/Rendering/SwapChain.h"
 #include "Engine/Rendering/RenderPass.h"
 #include "Engine/Rendering/FramebufferManager.h"
+#include "Engine/Rendering/GraphicsPipeline.h"
+#include "Engine/Rendering/CommandPool.h"
+#include "Engine/Rendering/CommandBufferManager.h"
 
 #include "Utility/DebugMessenger.h"
+#include "Utility/AssetManager.h"
 
 #include <iostream>
 #include <vector>
@@ -38,6 +42,9 @@ private:
 		"VK_LAYER_KHRONOS_validation"
 	};
 
+	CommandBufferManager commandBufferManager{};
+	CommandPool commandPool{};
+	GraphicsPipeline graphicsPipeline{};
 	SwapChain swapChain{};
 	RenderPass renderPass{};
 	FramebufferManager framebufferManager{};

@@ -3,8 +3,11 @@
 
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 #include <stdexcept>
 #include <vector>
+
+#include "Utility/AssetManager.h"
 
 class GraphicsPipeline
 {
@@ -21,6 +24,9 @@ public:
 	//Getters
 	VkPipeline get() const;
 	VkPipelineLayout getLayout() const;
+
+	GraphicsPipeline() = default;
+	~GraphicsPipeline() = default;
 
 	void create(VkDevice device, VkExtent2D extent, VkRenderPass renderPass);
 	void createLayout(VkDevice device);

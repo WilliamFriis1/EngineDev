@@ -59,6 +59,12 @@ void VulkanEngine::vulkanInit()
 		swapChain.getImageViews(),
 		swapChain.getExtents()
 	);
+
+	graphicsPipeline.create(device, swapChain.getExtents(), renderPass.get());
+
+	commandPool.create(device, queueFamilyIndices.graphicsFamily.value());
+
+	commandBufferManager.create(device, commandPool.get(), static_cast<uint32_t>(framebufferManager.getCount()));
 }
 
 void VulkanEngine::cleanupGlfw()
@@ -371,6 +377,9 @@ void VulkanEngine::glfwFramebufferResized(GLFWwindow* window, int width, int hei
 // _____________Public_____________
 VulkanEngine::~VulkanEngine()
 {
+	commandBufferManager.cleanup();
+	commandPool.cleanup(device);
+	graphicsPipeline.cleanup(device);
 	framebufferManager.cleanupFramebuffers(device);
 	renderPass.cleanup(device);
 	swapChain.cleanup(device);
@@ -386,6 +395,8 @@ VulkanEngine::~VulkanEngine()
 
 void VulkanEngine::init()
 {
+	AssetManager::init();
+
 	windowInit();
 	vulkanInit();
 }

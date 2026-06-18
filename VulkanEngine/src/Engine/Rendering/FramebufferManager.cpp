@@ -1,5 +1,15 @@
 #include "FramebufferManager.h"
 
+const std::vector<VkFramebuffer>& FramebufferManager::get() const
+{
+	return framebuffers;
+}
+
+size_t FramebufferManager::getCount() const
+{
+	return framebuffers.size();
+}
+
 void FramebufferManager::createFramebuffers(VkDevice device, VkRenderPass renderPass, const std::vector<VkImageView>& imageViews, const VkExtent2D& extent)
 {
 	framebuffers.resize(imageViews.size());

@@ -11,6 +11,9 @@ private:
 	std::vector<VkFramebuffer> framebuffers;
 
 public:
+	const std::vector<VkFramebuffer>& get() const;
+	size_t getCount() const;
+
 	FramebufferManager() = default;
 	~FramebufferManager() = default;
 

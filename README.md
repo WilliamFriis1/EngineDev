@@ -14,9 +14,13 @@ This engine is solely for educational purposes at the moment, and the read me wi
 ### General Description of files (will update continously):
 VulkanEngine.h is the driving force and manager for the entire system. This will remain the main manager until other parts of the engine that are not graphics related are implemented.  
 
-Swapchain, renderpass and framebuffer are all part of the initial setup to render a frame. 
+Swapchain, renderpass and framebuffer are all part of the initial setup to render a frame.
 
 Graphicspipeline is responsible for parsing shaders and building the entire graphics pipeline.
+
+CommandPool and CommandBuffer is for passing GPU commands.
+
+AssetManager is a utility class for correct filepath usage.
 
 DebugMessenger is a utility class for the validation layers.
 
@@ -45,4 +49,13 @@ Graphics pipeline coming along. Once finished, command buffers is the next step.
 - Implemented simple vertex- and frag shaders. 
 - File parsing for reading the binary SPIR-V files (.spv) to create shader modules.
 - Began working on graphics pipeline. 
+#### ---------------------------------
+#### 19/06 - 2026
+CMake and filepath errors fixed. Graphics pipeline done.
+
+####
+- Graphics pipeline finished
+- Added AssetManager class for path convenience
+- Removed redudant subfolder
+- Implemented CommandPools and CommandBuffer
 #### ---------------------------------
