@@ -53,7 +53,7 @@ Graphics pipeline coming along. Once finished, command buffers is the next step.
 #### 19/06 - 2026
 CMake and filepath errors fixed. Graphics pipeline done.
 
-####
+##### Todays work
 - Graphics pipeline finished
 - Added AssetManager class for path convenience
 - Removed redudant subfolder
