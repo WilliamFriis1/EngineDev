@@ -59,3 +59,9 @@ CMake and filepath errors fixed. Graphics pipeline done.
 - Removed redudant subfolder
 - Implemented CommandPools and CommandBuffer
 #### ---------------------------------
+#### 20/06 - 2026
+The triangle is finally rendered.
+##### Todays work
+- Singular semaphores implemented for the entire commandbuffer. Will improve this for further synchornization safety.
+- drawFrame function implemented, and recreation of swapchain handling extended with checks during drawframe in case of error handles during image aquiring and presentation.
+#### ---------------------------------

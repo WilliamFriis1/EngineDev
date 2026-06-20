@@ -51,8 +51,10 @@ private:
 	DebugMessenger debugMessenger{};
 
 	SwapChainSupportDetails swapChainSupportDetails;
+	QueueFamilyIndices queueFamilyIndices;
 
 	GLFWwindow* window = nullptr;
+
 	VkInstance vkInstance = VK_NULL_HANDLE;
 	VkSurfaceKHR surface = VK_NULL_HANDLE;
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
@@ -61,7 +63,10 @@ private:
 	VkQueue graphicsQueue = VK_NULL_HANDLE;
 	VkQueue presentQueue = VK_NULL_HANDLE;
 
-	QueueFamilyIndices queueFamilyIndices;
+	VkSemaphore imageAvailableSemaphore = VK_NULL_HANDLE;
+	VkSemaphore renderFinishedSemaphore = VK_NULL_HANDLE;
+
+	VkFence inFlightFence = VK_NULL_HANDLE;
 
 	//Initialization
 	void windowInit();
@@ -72,12 +77,14 @@ private:
 	void cleanupVulkan();
 	void cleanupSurface();
 	void cleanupDevice();
+	void cleanupSyncObjects();
 
 	//Create
 	void createInstance();
 	void createSurface();
 	void selectPhysicalDevice();
 	void createLogicalDevice();
+	void createSyncObjects();
 
 	//Update
 	void drawFrame();

@@ -107,6 +107,11 @@ bool SwapChain::checkDeviceExtensionSupport(VkPhysicalDevice device)
 
 // _____________Public_____________
 
+const VkSwapchainKHR& SwapChain::get() const
+{
+	return swapChain;
+}
+
 VkFormat SwapChain::getImageFormat() const
 {
 	return imageFormat;

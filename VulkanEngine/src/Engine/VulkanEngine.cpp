@@ -65,6 +65,10 @@ void VulkanEngine::vulkanInit()
 	commandPool.create(device, queueFamilyIndices.graphicsFamily.value());
 
 	commandBufferManager.create(device, commandPool.get(), static_cast<uint32_t>(framebufferManager.getCount()));
+
+	commandBufferManager.record(renderPass.get(), swapChain.getExtents(), graphicsPipeline.get(), graphicsPipeline.getLayout(), framebufferManager.get());
+
+	createSyncObjects();
 }
 
 void VulkanEngine::cleanupGlfw()
@@ -98,6 +102,22 @@ void VulkanEngine::cleanupDevice()
 		vkDestroyDevice(device, nullptr);
 		device = VK_NULL_HANDLE;
 	}
+}
+
+void VulkanEngine::cleanupSyncObjects()
+{
+	if (inFlightFence != VK_NULL_HANDLE)
+		vkDestroyFence(device, inFlightFence, nullptr);
+
+	if (renderFinishedSemaphore != VK_NULL_HANDLE)
+		vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
+
+	if (imageAvailableSemaphore != VK_NULL_HANDLE)
+		vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
+
+	inFlightFence = VK_NULL_HANDLE;
+	renderFinishedSemaphore = VK_NULL_HANDLE;
+	imageAvailableSemaphore = VK_NULL_HANDLE;
 }
 
 void VulkanEngine::createInstance()
@@ -262,8 +282,82 @@ void VulkanEngine::createLogicalDevice()
 	std::cout << "Present Queue Family: " << queueFamilyIndices.presentFamily.value() << "\n";
 }
 
+void VulkanEngine::createSyncObjects()
+{
+	VkSemaphoreCreateInfo semaphoreInfo{};
+	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+	VkFenceCreateInfo fenceInfo{};
+	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+	if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS)
+		throw std::runtime_error("Failed to create image available semaphore");
+
+	if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &renderFinishedSemaphore) != VK_SUCCESS)
+		throw std::runtime_error("Failed to create render finished semaphore");
+
+	if (vkCreateFence(device, &fenceInfo, nullptr, &inFlightFence) != VK_SUCCESS)
+		throw std::runtime_error("Failed to create fence");
+}
+
 void VulkanEngine::drawFrame()
 {
+	uint32_t imageIndex;
+
+	vkWaitForFences(device, 1, &inFlightFence, VK_TRUE, UINT64_MAX);
+	vkResetFences(device, 1, &inFlightFence);
+
+	VkResult result = vkAcquireNextImageKHR(device, swapChain.get(), UINT64_MAX, imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+
+	if (result == VK_ERROR_OUT_OF_DATE_KHR)
+	{
+		recreateSwapChain();
+		return;
+	}
+
+	VkCommandBuffer commandBuffer = commandBufferManager.get()[imageIndex];
+
+	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+
+	VkSubmitInfo submitInfo{};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+	submitInfo.waitSemaphoreCount = 1;
+	submitInfo.pWaitSemaphores = &imageAvailableSemaphore;
+	submitInfo.pWaitDstStageMask = waitStages;
+
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &commandBuffer;
+
+	submitInfo.signalSemaphoreCount = 1;
+	submitInfo.pSignalSemaphores = &renderFinishedSemaphore;
+
+	if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFence) != VK_SUCCESS)
+	{
+		throw std::runtime_error("Failed to submit draw command buffer");
+	}
+
+	VkPresentInfoKHR presentInfo{};
+	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+	presentInfo.waitSemaphoreCount = 1;
+	presentInfo.pWaitSemaphores = &renderFinishedSemaphore;;
+
+	VkSwapchainKHR swapChains[] = { swapChain.get() };
+
+	presentInfo.swapchainCount = 1;
+	presentInfo.pSwapchains = swapChains;
+
+	presentInfo.pImageIndices = &imageIndex;
+
+	result = vkQueuePresentKHR(presentQueue, &presentInfo);
+
+	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || isFramebufferResized)
+	{
+		isFramebufferResized = false;
+		recreateSwapChain();
+	}
 
 }
 
@@ -377,6 +471,7 @@ void VulkanEngine::glfwFramebufferResized(GLFWwindow* window, int width, int hei
 // _____________Public_____________
 VulkanEngine::~VulkanEngine()
 {
+	cleanupSyncObjects();
 	commandBufferManager.cleanup();
 	commandPool.cleanup(device);
 	graphicsPipeline.cleanup(device);
@@ -406,6 +501,8 @@ void VulkanEngine::run()
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
+
+		drawFrame();
 	}
 }
 

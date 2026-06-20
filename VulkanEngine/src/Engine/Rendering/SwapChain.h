@@ -45,6 +45,7 @@ public:
 	};
 
 	//Getters
+	const VkSwapchainKHR& get() const;
 	VkFormat getImageFormat() const;
 	VkExtent2D getExtents() const;
 	std::vector<VkImageView> getImageViews() const;
