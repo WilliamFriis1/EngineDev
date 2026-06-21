@@ -7,6 +7,7 @@
 #include "Engine/Rendering/GraphicsPipeline.h"
 #include "Engine/Rendering/CommandPool.h"
 #include "Engine/Rendering/CommandBufferManager.h"
+#include "Engine/Rendering/SyncManager.h"
 
 #include "Utility/DebugMessenger.h"
 #include "Utility/AssetManager.h"
@@ -42,6 +43,7 @@ private:
 		"VK_LAYER_KHRONOS_validation"
 	};
 
+	SyncManager syncManager{};
 	CommandBufferManager commandBufferManager{};
 	CommandPool commandPool{};
 	GraphicsPipeline graphicsPipeline{};
@@ -63,10 +65,7 @@ private:
 	VkQueue graphicsQueue = VK_NULL_HANDLE;
 	VkQueue presentQueue = VK_NULL_HANDLE;
 
-	VkSemaphore imageAvailableSemaphore = VK_NULL_HANDLE;
-	VkSemaphore renderFinishedSemaphore = VK_NULL_HANDLE;
-
-	VkFence inFlightFence = VK_NULL_HANDLE;
+	uint32_t currentFrame = 0;
 
 	//Initialization
 	void windowInit();
@@ -77,14 +76,12 @@ private:
 	void cleanupVulkan();
 	void cleanupSurface();
 	void cleanupDevice();
-	void cleanupSyncObjects();
 
 	//Create
 	void createInstance();
 	void createSurface();
 	void selectPhysicalDevice();
 	void createLogicalDevice();
-	void createSyncObjects();
 
 	//Update
 	void drawFrame();

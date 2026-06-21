@@ -68,7 +68,7 @@ void VulkanEngine::vulkanInit()
 
 	commandBufferManager.record(renderPass.get(), swapChain.getExtents(), graphicsPipeline.get(), graphicsPipeline.getLayout(), framebufferManager.get());
 
-	createSyncObjects();
+	syncManager.create(device, static_cast<uint32_t>(swapChain.getImageCount()));
 }
 
 void VulkanEngine::cleanupGlfw()
@@ -102,22 +102,6 @@ void VulkanEngine::cleanupDevice()
 		vkDestroyDevice(device, nullptr);
 		device = VK_NULL_HANDLE;
 	}
-}
-
-void VulkanEngine::cleanupSyncObjects()
-{
-	if (inFlightFence != VK_NULL_HANDLE)
-		vkDestroyFence(device, inFlightFence, nullptr);
-
-	if (renderFinishedSemaphore != VK_NULL_HANDLE)
-		vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
-
-	if (imageAvailableSemaphore != VK_NULL_HANDLE)
-		vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
-
-	inFlightFence = VK_NULL_HANDLE;
-	renderFinishedSemaphore = VK_NULL_HANDLE;
-	imageAvailableSemaphore = VK_NULL_HANDLE;
 }
 
 void VulkanEngine::createInstance()
@@ -282,39 +266,34 @@ void VulkanEngine::createLogicalDevice()
 	std::cout << "Present Queue Family: " << queueFamilyIndices.presentFamily.value() << "\n";
 }
 
-void VulkanEngine::createSyncObjects()
-{
-	VkSemaphoreCreateInfo semaphoreInfo{};
-	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-
-	VkFenceCreateInfo fenceInfo{};
-	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-
-	if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS)
-		throw std::runtime_error("Failed to create image available semaphore");
-
-	if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &renderFinishedSemaphore) != VK_SUCCESS)
-		throw std::runtime_error("Failed to create render finished semaphore");
-
-	if (vkCreateFence(device, &fenceInfo, nullptr, &inFlightFence) != VK_SUCCESS)
-		throw std::runtime_error("Failed to create fence");
-}
-
 void VulkanEngine::drawFrame()
 {
 	uint32_t imageIndex;
 
-	vkWaitForFences(device, 1, &inFlightFence, VK_TRUE, UINT64_MAX);
-	vkResetFences(device, 1, &inFlightFence);
+	VkFence fence = syncManager.getFramesInFlight(currentFrame);
+	VkSemaphore imageAvailSem = syncManager.getImageAvailable(currentFrame);
 
-	VkResult result = vkAcquireNextImageKHR(device, swapChain.get(), UINT64_MAX, imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+	vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
+	vkResetFences(device, 1, &fence);
+
+	VkResult result = vkAcquireNextImageKHR(device, swapChain.get(), UINT64_MAX, imageAvailSem, VK_NULL_HANDLE, &imageIndex);
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
 		recreateSwapChain();
 		return;
 	}
+
+	VkSemaphore renderFinSem = syncManager.getRenderFinished(imageIndex);
+
+	VkFence& imageInFlight = syncManager.getImageInFlight(imageIndex);
+
+	if (imageInFlight != VK_NULL_HANDLE)
+	{
+		vkWaitForFences(device, 1, &imageInFlight, VK_TRUE, UINT64_MAX);
+	}
+
+	imageInFlight = fence;
 
 	VkCommandBuffer commandBuffer = commandBufferManager.get()[imageIndex];
 
@@ -324,16 +303,16 @@ void VulkanEngine::drawFrame()
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
 	submitInfo.waitSemaphoreCount = 1;
-	submitInfo.pWaitSemaphores = &imageAvailableSemaphore;
+	submitInfo.pWaitSemaphores = &imageAvailSem;
 	submitInfo.pWaitDstStageMask = waitStages;
 
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &commandBuffer;
 
 	submitInfo.signalSemaphoreCount = 1;
-	submitInfo.pSignalSemaphores = &renderFinishedSemaphore;
+	submitInfo.pSignalSemaphores = &renderFinSem;
 
-	if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFence) != VK_SUCCESS)
+	if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, fence) != VK_SUCCESS)
 	{
 		throw std::runtime_error("Failed to submit draw command buffer");
 	}
@@ -342,7 +321,7 @@ void VulkanEngine::drawFrame()
 	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 
 	presentInfo.waitSemaphoreCount = 1;
-	presentInfo.pWaitSemaphores = &renderFinishedSemaphore;;
+	presentInfo.pWaitSemaphores = &renderFinSem;
 
 	VkSwapchainKHR swapChains[] = { swapChain.get() };
 
@@ -358,6 +337,8 @@ void VulkanEngine::drawFrame()
 		isFramebufferResized = false;
 		recreateSwapChain();
 	}
+
+	currentFrame = (currentFrame + 1) % SyncManager::MAX_FRAMES_IN_FLIGHT;
 
 }
 
@@ -471,7 +452,7 @@ void VulkanEngine::glfwFramebufferResized(GLFWwindow* window, int width, int hei
 // _____________Public_____________
 VulkanEngine::~VulkanEngine()
 {
-	cleanupSyncObjects();
+	syncManager.cleanup(device);
 	commandBufferManager.cleanup();
 	commandPool.cleanup(device);
 	graphicsPipeline.cleanup(device);

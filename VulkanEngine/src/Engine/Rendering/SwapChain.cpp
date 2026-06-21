@@ -127,6 +127,11 @@ std::vector<VkImageView> SwapChain::getImageViews() const
 	return imageViews;
 }
 
+size_t SwapChain::getImageCount() const
+{
+	return images.size();
+}
+
 void SwapChain::create(VkPhysicalDevice physicalDevice, VkDevice device, VkSurfaceKHR surface, GLFWwindow* window, uint32_t graphicsFamily, uint32_t presentFamily, const SwapChainSupportDetails &details)
 {
 	auto surfaceFormat = chooseSurfaceFormat(details.formats);

@@ -12,17 +12,24 @@ I'm a Game Dev bachelor graduate looking to deepen my understanding of game engi
 This engine is solely for educational purposes at the moment, and the read me will act as a journal for my implementation steps.  
 
 ### General Description of files (will update continously):
+
+#### Managers
 VulkanEngine.h is the driving force and manager for the entire system. This will remain the main manager until other parts of the engine that are not graphics related are implemented.  
 
+#### Rendering
 Swapchain, renderpass and framebuffer are all part of the initial setup to render a frame.
 
 Graphicspipeline is responsible for parsing shaders and building the entire graphics pipeline.
 
 CommandPool and CommandBuffer is for passing GPU commands.
 
+SyncManager is responsible for the synochronization of frames and swapchain images. 
+
+#### Utility
 AssetManager is a utility class for correct filepath usage.
 
 DebugMessenger is a utility class for the validation layers.
+
 
 ### Journal
 This journal was started a few days into the project, but will from now on get continous updates.
@@ -64,4 +71,12 @@ The triangle is finally rendered.
 ##### Todays work
 - Singular semaphores implemented for the entire commandbuffer. Will improve this for further synchornization safety.
 - drawFrame function implemented, and recreation of swapchain handling extended with checks during drawframe in case of error handles during image aquiring and presentation.
+#### ---------------------------------
+#### 21/06 - 2026
+Synchronization improved and finished (for now). Started moving away from hardcoded vertices now that everything works, and started implementing the vertex buffer.
+
+#### Todays work
+- Synochronization complete
+- Auto compiling shaders on rebuilds
+- Began working on vertex buffer.
 #### ---------------------------------

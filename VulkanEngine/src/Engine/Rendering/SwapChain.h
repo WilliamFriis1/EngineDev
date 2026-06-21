@@ -49,6 +49,7 @@ public:
 	VkFormat getImageFormat() const;
 	VkExtent2D getExtents() const;
 	std::vector<VkImageView> getImageViews() const;
+	size_t getImageCount() const;
 
 
 	SwapChain() = default;
