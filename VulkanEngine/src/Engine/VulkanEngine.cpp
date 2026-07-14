@@ -69,6 +69,8 @@ void VulkanEngine::vulkanInit()
 	commandBufferManager.record(renderPass.get(), swapChain.getExtents(), graphicsPipeline.get(), graphicsPipeline.getLayout(), framebufferManager.get());
 
 	syncManager.create(device, static_cast<uint32_t>(swapChain.getImageCount()));
+
+	transferManager.create(device, commandPool.get(), graphicsQueue);
 }
 
 void VulkanEngine::cleanupGlfw()

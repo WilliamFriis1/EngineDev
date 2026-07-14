@@ -25,6 +25,8 @@ CommandPool and CommandBuffer is for passing GPU commands.
 
 SyncManager is responsible for the synochronization of frames and swapchain images. 
 
+TransferManager is currently only responsible for the uploading of buffers to the GPU. This class will be extended later on.
+
 #### Utility
 AssetManager is a utility class for correct filepath usage.
 
@@ -79,4 +81,11 @@ Synchronization improved and finished (for now). Started moving away from hardco
 - Synochronization complete
 - Auto compiling shaders on rebuilds
 - Began working on vertex buffer.
+#### ---------------------------------
+#### 14/07 - 2026
+Back after a few weeks. Decided to go with a generic buffer class instead of repeating code in all buffers. Uploading responsibility has been put in a transfer manager class.
+
+#### Todays work
+- Buffer class implementation
+- Transfer manager implementation
 #### ---------------------------------

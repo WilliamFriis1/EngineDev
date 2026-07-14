@@ -14,6 +14,7 @@ project ("VulkanEngine")
 add_executable (VulkanEngine 
 	"src/Sandbox/main.cpp"
 	"src/Engine/VulkanEngine.cpp"
+
 	"src/Engine/Rendering/SwapChain.cpp" 
 	"src/Engine/Rendering/RenderPass.cpp" 
 	"src/Engine/Rendering/FramebufferManager.cpp" 
@@ -21,9 +22,13 @@ add_executable (VulkanEngine
 	"src/Engine/Rendering/CommandPool.cpp" 
 	"src/Engine/Rendering/CommandBufferManager.cpp" 
 	"src/Engine/Rendering/SyncManager.cpp" 
-	"src/Utility/DebugMessenger.h"
+	"src/Engine/Rendering/TransferManager.cpp"
+
 	"src/Utility/AssetManager.cpp"
-	"src/Engine/Resources/VertexBuffer.h")
+
+	"src/Engine/Resources/Buffer.cpp"
+	"src/Engine/Resources/VertexBuffer.cpp"
+	)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET VulkanEngine PROPERTY CXX_STANDARD 20)

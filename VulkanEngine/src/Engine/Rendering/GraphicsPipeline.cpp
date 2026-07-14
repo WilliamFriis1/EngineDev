@@ -46,7 +46,6 @@ void GraphicsPipeline::create(VkDevice device, VkExtent2D extent, VkRenderPass r
 {
     createLayout(device);
 
-    std::cout << std::filesystem::current_path();
     auto vertShaderCode = readFile(AssetManager::getAssetPath("shaders/bin/triangle.vert.spv"));
     auto fragShaderCode = readFile(AssetManager::getAssetPath("shaders/bin/triangle.frag.spv"));
 
