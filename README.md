@@ -1,7 +1,8 @@
 # EngineDevelopment
 ## Sideproject aimed to improve my understanding Vulkan and game engine architechture.
 
-I'm a Game Dev bachelor graduate looking to deepen my understanding of game engine architecture through the creation of my own engine.
+I'm a Game Dev bachelor graduate looking to deepen my understanding of game engine architecture through the creation of my own engine. 
+The development speed of this project will be slow, as the major goal of this project is not a finished product, rather making sure that I gain understanding of the subject.
 
 ### Dependecies
 - CMake 4.3.3
