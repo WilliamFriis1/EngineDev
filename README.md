@@ -32,6 +32,11 @@ AssetManager is a utility class for correct filepath usage.
 
 DebugMessenger is a utility class for the validation layers.
 
+#### Resources
+The buffer class is simply an interface for subsequent buffers to utilize, to avoid code repetition.
+
+VertexBuffer will pass vertex information to the staging buffer through the transfer manager, once implemented. 
+
 
 ### Journal
 This journal was started a few days into the project, but will from now on get continous updates.
