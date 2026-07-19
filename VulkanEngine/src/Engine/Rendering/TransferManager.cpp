@@ -52,4 +52,12 @@ void TransferManager::create(VkDevice device, VkCommandPool commandPool, VkQueue
 
 void TransferManager::copyBuffer(VkBuffer src, VkBuffer dst, VkDeviceSize bufferSize)
 {
+	VkCommandBuffer commandBuffer = beginSingleTimeCommands();
+
+	VkBufferCopy copyRegion{};
+	copyRegion.size = bufferSize;
+
+	vkCmdCopyBuffer(commandBuffer, src, dst, 1, &copyRegion);
+
+	endSingleTimeCommands(commandBuffer);
 }

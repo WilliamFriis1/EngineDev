@@ -9,6 +9,7 @@
 #include "Engine/Rendering/CommandBufferManager.h"
 #include "Engine/Rendering/SyncManager.h"
 #include "Engine/Rendering/TransferManager.h"
+#include "Engine/Rendering/ResourceManager.h"
 
 #include "Utility/DebugMessenger.h"
 #include "Utility/AssetManager.h"
@@ -44,6 +45,7 @@ private:
 		"VK_LAYER_KHRONOS_validation"
 	};
 
+	ResourceManager resourceManager{};
 	TransferManager transferManager{};
 	SyncManager syncManager{};
 	CommandBufferManager commandBufferManager{};

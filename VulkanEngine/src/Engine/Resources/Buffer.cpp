@@ -19,18 +19,21 @@ uint32_t Buffer::findMemoryType(VkPhysicalDevice physicalDevice, uint32_t typeFi
 	throw std::runtime_error("Failed to find suitable memory type");
 }
 
-VkDeviceMemory Buffer::getMemory() const
-{
-	return memory;
-}
-
 VkBuffer Buffer::get() const
 {
 	return buffer;
 }
 
+VkDeviceSize Buffer::getSize() const
+{
+	return size;
+}
+
 void Buffer::create(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize bufferSize, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)
 {
+	this->device = device;
+	this->size = size;
+
 	VkBufferCreateInfo bufferInfo{};
 	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 
@@ -57,7 +60,7 @@ void Buffer::create(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSi
 		throw std::runtime_error("Failed to bind buffer to memory");
 }
 
-void Buffer::cleanup(VkDevice device)
+void Buffer::cleanup()
 {
 	if (buffer != VK_NULL_HANDLE)
 	{
@@ -70,4 +73,19 @@ void Buffer::cleanup(VkDevice device)
 		vkFreeMemory(device, memory, nullptr);
 		memory = VK_NULL_HANDLE;
 	}
+}
+
+void* Buffer::map()
+{
+	void* data;
+
+	if (vkMapMemory(device, memory, 0, size, 0, &data) != VK_SUCCESS)
+		throw std::runtime_error("Failed to map buffer memory");
+
+	return data;
+}
+
+void Buffer::unmap()
+{
+	vkUnmapMemory(device, memory);
 }

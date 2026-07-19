@@ -1,22 +1,14 @@
 #pragma once
+
 #include "Buffer.h"
 
 #include <vulkan/vulkan.h>
-#include <glm/glm.hpp>
+#include <cstring>
 
-
-#include <vector>
-
-struct Vertex
-{
-	glm::vec2 pos;
-	glm::vec3 color;
-};
-
-class VertexBuffer
+class StagingBuffer
 {
 private:
-    
+
     Buffer buffer{};
 
 public:
@@ -25,4 +17,6 @@ public:
     void create(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize size);
 
     void cleanup();
+
+    void upload(const void* data);
 };

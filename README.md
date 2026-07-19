@@ -95,3 +95,12 @@ Back after a few weeks. Decided to go with a generic buffer class instead of rep
 - Buffer class implementation
 - Transfer manager implementation
 #### ---------------------------------
+#### 19/07 - 2026
+Some architectural changes made, and I'm getting close a full resource pipeline.
+
+#### Todays work
+- Rudimentary resource manager implementation
+- Staging buffer
+- Finished transfer manager
+- Vertex buffer
+#### ---------------------------------

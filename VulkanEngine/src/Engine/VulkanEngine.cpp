@@ -71,6 +71,8 @@ void VulkanEngine::vulkanInit()
 	syncManager.create(device, static_cast<uint32_t>(swapChain.getImageCount()));
 
 	transferManager.create(device, commandPool.get(), graphicsQueue);
+
+	resourceManager.create(physicalDevice, device, transferManager);
 }
 
 void VulkanEngine::cleanupGlfw()
@@ -454,6 +456,8 @@ void VulkanEngine::glfwFramebufferResized(GLFWwindow* window, int width, int hei
 // _____________Public_____________
 VulkanEngine::~VulkanEngine()
 {
+	resourceManager.cleanup();
+	transferManager.cleanup(device);
 	syncManager.cleanup(device);
 	commandBufferManager.cleanup();
 	commandPool.cleanup(device);

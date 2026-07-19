@@ -7,9 +7,9 @@ class TransferManager
 {
 private:
 
-	VkDevice device;
-	VkQueue graphicsQueue;
-	VkCommandPool commandPool;
+	VkDevice device{};
+	VkQueue graphicsQueue{};
+	VkCommandPool commandPool{};
 
 	VkCommandBuffer beginSingleTimeCommands();
 

@@ -23,12 +23,14 @@ add_executable (VulkanEngine
 	"src/Engine/Rendering/CommandBufferManager.cpp" 
 	"src/Engine/Rendering/SyncManager.cpp" 
 	"src/Engine/Rendering/TransferManager.cpp"
+	"src/Engine/Rendering/ResourceManager.cpp"
 
 	"src/Utility/AssetManager.cpp"
 
 	"src/Engine/Resources/Buffer.cpp"
 	"src/Engine/Resources/VertexBuffer.cpp"
-	)
+	"src/Engine/Resources/StagingBuffer.cpp"
+)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET VulkanEngine PROPERTY CXX_STANDARD 20)
