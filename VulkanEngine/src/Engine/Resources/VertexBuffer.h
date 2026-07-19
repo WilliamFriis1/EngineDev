@@ -1,17 +1,7 @@
 #pragma once
 #include "Buffer.h"
 
-#include <vulkan/vulkan.h>
-#include <glm/glm.hpp>
-
-
 #include <vector>
-
-struct Vertex
-{
-	glm::vec2 pos;
-	glm::vec3 color;
-};
 
 class VertexBuffer
 {

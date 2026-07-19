@@ -32,7 +32,7 @@ VkDeviceSize Buffer::getSize() const
 void Buffer::create(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize bufferSize, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)
 {
 	this->device = device;
-	this->size = size;
+	size = bufferSize;
 
 	VkBufferCreateInfo bufferInfo{};
 	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;

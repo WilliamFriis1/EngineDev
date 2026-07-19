@@ -104,3 +104,12 @@ Some architectural changes made, and I'm getting close a full resource pipeline.
 - Finished transfer manager
 - Vertex buffer
 #### ---------------------------------
+#### 20/07 - 2026
+No longer a hardcoded triangle, but some temp solutions added until assets and mesh classes are in place.
+
+#### Todays work
+- Removed previous hardcoded instructions
+- Fixed compilation errors for shaders
+- Added a temp common.h for vertex struct, will later live in Mesh
+- Temp solutions to bind vert buffer to command buffers, will be changed later on
+#### ---------------------------------- 

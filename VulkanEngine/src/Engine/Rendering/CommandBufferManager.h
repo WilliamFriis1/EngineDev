@@ -16,5 +16,5 @@ public:
 
 	void cleanup();
 
-	void record(VkRenderPass renderPass, VkExtent2D extent, VkPipeline graphicsPipeline, VkPipelineLayout pipelineLayout, const std::vector<VkFramebuffer>& framebuffers);
+	void record(VkRenderPass renderPass, VkExtent2D extent, VkPipeline graphicsPipeline, VkPipelineLayout pipelineLayout, const std::vector<VkFramebuffer>& framebuffers, VkBuffer vertBuffer, uint32_t vertCount);
 };

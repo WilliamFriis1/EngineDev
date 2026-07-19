@@ -19,7 +19,5 @@ public:
 
 	void create(VkDevice device, VkCommandPool commandPool, VkQueue graphicsQueue);
 
-	void cleanup(VkDevice device);
-
 	void copyBuffer(VkBuffer src, VkBuffer dst, VkDeviceSize bufferSize);
 };

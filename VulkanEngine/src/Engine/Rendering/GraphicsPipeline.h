@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "Utility/AssetManager.h"
+#include "Engine/Core/Common.h"
 
 class GraphicsPipeline
 {

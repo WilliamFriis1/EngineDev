@@ -66,13 +66,13 @@ void VulkanEngine::vulkanInit()
 
 	commandBufferManager.create(device, commandPool.get(), static_cast<uint32_t>(framebufferManager.getCount()));
 
-	commandBufferManager.record(renderPass.get(), swapChain.getExtents(), graphicsPipeline.get(), graphicsPipeline.getLayout(), framebufferManager.get());
-
 	syncManager.create(device, static_cast<uint32_t>(swapChain.getImageCount()));
 
 	transferManager.create(device, commandPool.get(), graphicsQueue);
 
 	resourceManager.create(physicalDevice, device, transferManager);
+
+	commandBufferManager.record(renderPass.get(), swapChain.getExtents(), graphicsPipeline.get(), graphicsPipeline.getLayout(), framebufferManager.get(), resourceManager.getVertexBuffer(), resourceManager.getVertCount());
 }
 
 void VulkanEngine::cleanupGlfw()
@@ -457,7 +457,6 @@ void VulkanEngine::glfwFramebufferResized(GLFWwindow* window, int width, int hei
 VulkanEngine::~VulkanEngine()
 {
 	resourceManager.cleanup();
-	transferManager.cleanup(device);
 	syncManager.cleanup(device);
 	commandBufferManager.cleanup();
 	commandPool.cleanup(device);
