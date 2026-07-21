@@ -1,18 +1,18 @@
 ﻿#include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 
-#include "Engine/Rendering/SwapChain.h"
-#include "Engine/Rendering/RenderPass.h"
-#include "Engine/Rendering/FramebufferManager.h"
-#include "Engine/Rendering/GraphicsPipeline.h"
-#include "Engine/Rendering/CommandPool.h"
-#include "Engine/Rendering/CommandBufferManager.h"
-#include "Engine/Rendering/SyncManager.h"
-#include "Engine/Rendering/TransferManager.h"
-#include "Engine/Rendering/ResourceManager.h"
+#include "Engine/Rendering/swapChain.h"
+#include "Engine/Rendering/renderPass.h"
+#include "Engine/Rendering/framebufferManager.h"
+#include "Engine/Rendering/graphicsPipeline.h"
+#include "Engine/Rendering/commandPool.h"
+#include "Engine/Rendering/commandBufferManager.h"
+#include "Engine/Rendering/syncManager.h"
+#include "Engine/Rendering/transferManager.h"
+#include "Engine/Rendering/resourceManager.h"
 
-#include "Utility/DebugMessenger.h"
-#include "Utility/AssetManager.h"
+#include "Utility/debugMessenger.h"
+#include "Utility/assetManager.h"
 
 #include <iostream>
 #include <vector>

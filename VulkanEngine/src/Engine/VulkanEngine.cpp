@@ -72,7 +72,7 @@ void VulkanEngine::vulkanInit()
 
 	resourceManager.create(physicalDevice, device, transferManager);
 
-	commandBufferManager.record(renderPass.get(), swapChain.getExtents(), graphicsPipeline.get(), graphicsPipeline.getLayout(), framebufferManager.get(), resourceManager.getVertexBuffer(), resourceManager.getVertCount());
+	commandBufferManager.record(renderPass.get(), swapChain.getExtents(), graphicsPipeline.get(), graphicsPipeline.getLayout(), framebufferManager.get(), resourceManager.getMeshes());
 }
 
 void VulkanEngine::cleanupGlfw()
@@ -456,7 +456,6 @@ void VulkanEngine::glfwFramebufferResized(GLFWwindow* window, int width, int hei
 // _____________Public_____________
 VulkanEngine::~VulkanEngine()
 {
-	resourceManager.cleanup();
 	syncManager.cleanup(device);
 	commandBufferManager.cleanup();
 	commandPool.cleanup(device);

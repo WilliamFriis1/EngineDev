@@ -7,8 +7,8 @@
 #include <stdexcept>
 #include <vector>
 
-#include "Utility/AssetManager.h"
-#include "Engine/Core/Common.h"
+#include "Utility/assetManager.h"
+#include "Engine/Core/common.h"
 
 class GraphicsPipeline
 {

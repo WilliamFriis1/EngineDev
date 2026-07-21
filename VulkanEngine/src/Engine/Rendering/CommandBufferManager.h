@@ -4,6 +4,8 @@
 #include <iostream>
 #include <vector>
 
+#include "Engine/Resources/mesh.h"
+
 class CommandBufferManager
 {
 private:
@@ -16,5 +18,5 @@ public:
 
 	void cleanup();
 
-	void record(VkRenderPass renderPass, VkExtent2D extent, VkPipeline graphicsPipeline, VkPipelineLayout pipelineLayout, const std::vector<VkFramebuffer>& framebuffers, VkBuffer vertBuffer, uint32_t vertCount);
+	void record(VkRenderPass renderPass, VkExtent2D extent, VkPipeline graphicsPipeline, VkPipelineLayout pipelineLayout, const std::vector<VkFramebuffer>& framebuffers, std::vector<Mesh>& meshes);
 };

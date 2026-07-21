@@ -28,6 +28,8 @@ SyncManager is responsible for the synochronization of frames and swapchain imag
 
 TransferManager is currently only responsible for the uploading of buffers to the GPU. This class will be extended later on.
 
+ResourceManager will be responsible for GPU resources, however, currently instantiates meshes.
+
 #### Utility
 AssetManager is a utility class for correct filepath usage.
 
@@ -36,7 +38,11 @@ DebugMessenger is a utility class for the validation layers.
 #### Resources
 The buffer class is simply an interface for subsequent buffers to utilize, to avoid code repetition.
 
-VertexBuffer will pass vertex information to the staging buffer through the transfer manager, once implemented. 
+Staging buffer uploads data to index or vertex buffer allocated memory.
+
+Other buffer classes are simple wrappers from usage- and memory flags.
+
+Mesh class currently contains GPU resources associated with meshes. Will most likely simply store a reference to relevant resources in the future.
 
 
 ### Journal
@@ -112,4 +118,13 @@ No longer a hardcoded triangle, but some temp solutions added until assets and m
 - Fixed compilation errors for shaders
 - Added a temp common.h for vertex struct, will later live in Mesh
 - Temp solutions to bind vert buffer to command buffers, will be changed later on
+#### ---------------------------------- 
+#### 21/07 - 2026
+Implemented index buffers and mesh class. Resource manager currently instantiates the meshes, but this will change later on. Command buffer manager now accepts a vector of meshes, which also feels like a great milestone.
+Asset loading seems like the next step.
+
+#### Todays work
+- Index buffer
+- Mesh class
+- adjusted class files to a more typical c++ naming convention
 #### ---------------------------------- 

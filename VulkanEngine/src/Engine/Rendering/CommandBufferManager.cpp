@@ -29,10 +29,9 @@ void CommandBufferManager::cleanup()
 	commandBuffers.clear();
 }
 
-void CommandBufferManager::record(VkRenderPass renderPass, VkExtent2D extent, VkPipeline graphicsPipeline, VkPipelineLayout pipelineLayout, const std::vector<VkFramebuffer>& framebuffers, VkBuffer vertBuffer, uint32_t vertCount)
+void CommandBufferManager::record(VkRenderPass renderPass, VkExtent2D extent, VkPipeline graphicsPipeline, VkPipelineLayout pipelineLayout, const std::vector<VkFramebuffer>& framebuffers, std::vector<Mesh>& meshes)
 {
 	VkClearValue clearColor = { {0.0f, 0.0f, 0.0f, 1.0f} };
-	VkBuffer buffers[] = { vertBuffer };
 	VkDeviceSize offsets[] = { 0 };
 
 	for (size_t i = 0; i < commandBuffers.size(); i++)
@@ -60,9 +59,18 @@ void CommandBufferManager::record(VkRenderPass renderPass, VkExtent2D extent, Vk
 
 		vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
-		vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, buffers, offsets);
+		VkBuffer buffer[1];
 
-		vkCmdDraw(commandBuffers[i], vertCount, 1, 0, 0);
+		for (auto& mesh : meshes)
+		{
+			buffer[0] = mesh.getVertexBuffer();
+
+			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, buffer, offsets);
+
+			vkCmdBindIndexBuffer(commandBuffers[i], mesh.getIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+
+			vkCmdDrawIndexed(commandBuffers[i], mesh.getIndexCount(), 1, 0, 0, 0);
+		}
 
 		vkCmdEndRenderPass(commandBuffers[i]);
 

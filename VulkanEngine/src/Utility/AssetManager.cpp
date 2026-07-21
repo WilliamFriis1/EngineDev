@@ -1,4 +1,4 @@
-#include "AssetManager.h"
+#include "assetManager.h"
 
 std::filesystem::path AssetManager::assetRoot;
 

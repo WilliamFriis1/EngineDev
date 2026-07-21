@@ -1,12 +1,10 @@
 #pragma once
 #include "buffer.h"
 
-#include <vector>
-
-class VertexBuffer
+class IndexBuffer
 {
 private:
-    
+
     Buffer buffer{};
 
 public:

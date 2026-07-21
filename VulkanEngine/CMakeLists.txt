@@ -15,21 +15,23 @@ add_executable (VulkanEngine
 	"src/Sandbox/main.cpp"
 	"src/Engine/VulkanEngine.cpp"
 
-	"src/Engine/Rendering/SwapChain.cpp" 
-	"src/Engine/Rendering/RenderPass.cpp" 
-	"src/Engine/Rendering/FramebufferManager.cpp" 
-	"src/Engine/Rendering/GraphicsPipeline.cpp" 
-	"src/Engine/Rendering/CommandPool.cpp" 
-	"src/Engine/Rendering/CommandBufferManager.cpp" 
-	"src/Engine/Rendering/SyncManager.cpp" 
-	"src/Engine/Rendering/TransferManager.cpp"
-	"src/Engine/Rendering/ResourceManager.cpp"
+	"src/Engine/Rendering/swapChain.cpp" 
+	"src/Engine/Rendering/renderPass.cpp" 
+	"src/Engine/Rendering/framebufferManager.cpp" 
+	"src/Engine/Rendering/graphicsPipeline.cpp" 
+	"src/Engine/Rendering/commandPool.cpp" 
+	"src/Engine/Rendering/commandBufferManager.cpp" 
+	"src/Engine/Rendering/syncManager.cpp" 
+	"src/Engine/Rendering/transferManager.cpp"
+	"src/Engine/Rendering/resourceManager.cpp"
 
-	"src/Utility/AssetManager.cpp"
+	"src/Utility/assetManager.cpp"
 
-	"src/Engine/Resources/Buffer.cpp"
-	"src/Engine/Resources/VertexBuffer.cpp"
-	"src/Engine/Resources/StagingBuffer.cpp"
+	"src/Engine/Resources/buffer.cpp"
+	"src/Engine/Resources/vertexBuffer.cpp"
+	"src/Engine/Resources/stagingBuffer.cpp"
+	"src/Engine/Resources/indexBuffer.cpp"
+	"src/Engine/Resources/mesh.cpp"
 )
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
