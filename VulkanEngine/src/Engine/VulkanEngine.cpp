@@ -60,7 +60,9 @@ void VulkanEngine::vulkanInit()
 		swapChain.getExtents()
 	);
 
-	graphicsPipeline.create(device, swapChain.getExtents(), renderPass.get());
+	descriptorManager.create(device);
+
+	graphicsPipeline.create(device, swapChain.getExtents(), renderPass.get(), descriptorManager.getDescriptorLayout());
 
 	commandPool.create(device, queueFamilyIndices.graphicsFamily.value());
 
@@ -72,7 +74,9 @@ void VulkanEngine::vulkanInit()
 
 	resourceManager.create(physicalDevice, device, transferManager);
 
-	commandBufferManager.record(renderPass.get(), swapChain.getExtents(), graphicsPipeline.get(), graphicsPipeline.getLayout(), framebufferManager.get(), resourceManager.getMeshes());
+	descriptorManager.update(device, resourceManager.getUniformBuffer());
+
+	commandBufferManager.record(renderPass.get(), swapChain.getExtents(), graphicsPipeline.get(), graphicsPipeline.getLayout(), framebufferManager.get(), descriptorManager.getDescriptorSet(), resourceManager.getMeshes());
 }
 
 void VulkanEngine::cleanupGlfw()

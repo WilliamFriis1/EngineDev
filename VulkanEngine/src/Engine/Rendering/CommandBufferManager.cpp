@@ -29,7 +29,7 @@ void CommandBufferManager::cleanup()
 	commandBuffers.clear();
 }
 
-void CommandBufferManager::record(VkRenderPass renderPass, VkExtent2D extent, VkPipeline graphicsPipeline, VkPipelineLayout pipelineLayout, const std::vector<VkFramebuffer>& framebuffers, std::vector<Mesh>& meshes)
+void CommandBufferManager::record(VkRenderPass renderPass, VkExtent2D extent, VkPipeline graphicsPipeline, VkPipelineLayout pipelineLayout, const std::vector<VkFramebuffer>& framebuffers, VkDescriptorSet descriptorSet, std::vector<Mesh>& meshes)
 {
 	VkClearValue clearColor = { {0.0f, 0.0f, 0.0f, 1.0f} };
 	VkDeviceSize offsets[] = { 0 };
@@ -58,6 +58,8 @@ void CommandBufferManager::record(VkRenderPass renderPass, VkExtent2D extent, Vk
 		vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 		vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+
+		vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, 0);
 
 		VkBuffer buffer[1];
 

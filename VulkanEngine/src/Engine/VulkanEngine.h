@@ -10,6 +10,7 @@
 #include "Engine/Rendering/syncManager.h"
 #include "Engine/Rendering/transferManager.h"
 #include "Engine/Rendering/resourceManager.h"
+#include "Engine/Rendering/descriptorManager.h"
 
 #include "Utility/debugMessenger.h"
 #include "Utility/assetManager.h"
@@ -54,6 +55,8 @@ private:
 	SwapChain swapChain{};
 	RenderPass renderPass{};
 	FramebufferManager framebufferManager{};
+	DescriptorManager descriptorManager{};
+
 	DebugMessenger debugMessenger{};
 
 	SwapChainSupportDetails swapChainSupportDetails;

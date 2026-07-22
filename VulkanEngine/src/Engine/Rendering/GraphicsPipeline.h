@@ -29,7 +29,6 @@ public:
 	GraphicsPipeline() = default;
 	~GraphicsPipeline() = default;
 
-	void create(VkDevice device, VkExtent2D extent, VkRenderPass renderPass);
-	void createLayout(VkDevice device);
+	void create(VkDevice device, VkExtent2D extent, VkRenderPass renderPass, VkDescriptorSetLayout descriptorLayout);
 	void cleanup(VkDevice device);
 };

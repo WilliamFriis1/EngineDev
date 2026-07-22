@@ -18,5 +18,5 @@ public:
 
 	void cleanup();
 
-	void record(VkRenderPass renderPass, VkExtent2D extent, VkPipeline graphicsPipeline, VkPipelineLayout pipelineLayout, const std::vector<VkFramebuffer>& framebuffers, std::vector<Mesh>& meshes);
+	void record(VkRenderPass renderPass, VkExtent2D extent, VkPipeline graphicsPipeline, VkPipelineLayout pipelineLayout, const std::vector<VkFramebuffer>& framebuffers, VkDescriptorSet descriptorSet, std::vector<Mesh>& meshes);
 };

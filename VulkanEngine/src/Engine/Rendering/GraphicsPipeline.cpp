@@ -42,9 +42,19 @@ VkPipelineLayout GraphicsPipeline::getLayout() const
     return pipelineLayout;
 }
 
-void GraphicsPipeline::create(VkDevice device, VkExtent2D extent, VkRenderPass renderPass)
+void GraphicsPipeline::create(VkDevice device, VkExtent2D extent, VkRenderPass renderPass, VkDescriptorSetLayout descriptorLayout)
 {
-    createLayout(device);
+    VkPipelineLayoutCreateInfo layoutInfo{};
+    layoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+
+    layoutInfo.setLayoutCount = 1;
+    layoutInfo.pSetLayouts = &descriptorLayout;
+
+    layoutInfo.pushConstantRangeCount = 0;
+    layoutInfo.pPushConstantRanges = nullptr;
+
+    if (vkCreatePipelineLayout(device, &layoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
+        throw std::runtime_error("Failed to create pipeline layout");
 
     auto vertShaderCode = readFile(AssetManager::getAssetPath("shaders/bin/triangle.vert.spv"));
     auto fragShaderCode = readFile(AssetManager::getAssetPath("shaders/bin/triangle.frag.spv"));
@@ -188,21 +198,6 @@ void GraphicsPipeline::create(VkDevice device, VkExtent2D extent, VkRenderPass r
 
 }
 
-void GraphicsPipeline::createLayout(VkDevice device)
-{
-    VkPipelineLayoutCreateInfo layoutInfo{};
-
-    layoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-
-    layoutInfo.setLayoutCount = 0;
-    layoutInfo.pSetLayouts = nullptr;
-
-    layoutInfo.pushConstantRangeCount = 0;
-    layoutInfo.pPushConstantRanges = nullptr;
-
-    if (vkCreatePipelineLayout(device, &layoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
-        throw std::runtime_error("Failed to create pipeline layout");
-}
 
 void GraphicsPipeline::cleanup(VkDevice device)
 {

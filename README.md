@@ -30,6 +30,8 @@ TransferManager is currently only responsible for the uploading of buffers to th
 
 ResourceManager will be responsible for GPU resources, however, currently instantiates meshes.
 
+DescriptorManager implements the necessary descriptor sets, layouts, and pools, while providing an interface for easy updating
+
 #### Utility
 AssetManager is a utility class for correct filepath usage.
 
@@ -43,6 +45,11 @@ Staging buffer uploads data to index or vertex buffer allocated memory.
 Other buffer classes are simple wrappers from usage- and memory flags.
 
 Mesh class currently contains GPU resources associated with meshes. Will most likely simply store a reference to relevant resources in the future.
+
+#### Scene
+Entity will represent a game object, which will be able to use components.
+
+Transform is self explanitory.
 
 
 ### Journal
@@ -127,4 +134,13 @@ Asset loading seems like the next step.
 - Index buffer
 - Mesh class
 - adjusted class files to a more typical c++ naming convention
+#### ---------------------------------- 
+#### 23/07 - 2026
+Uniform buffers and descriptor sets. Felt very overengineered but when the engine matures to a state with thousands of them, I guess it makes sence. Uniform buffer are currently fully connected with the vert shader.
+I decided to hold of on asset loading, as the vulkan part is not in its "1.0" version yet.
+
+#### Todays work
+- Uniform buffers
+- Preliminary transform struct & entity class
+- Descriptor sets and pools.
 #### ---------------------------------- 

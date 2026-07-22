@@ -27,17 +27,31 @@ void ResourceManager::create(VkPhysicalDevice physicalDevice, VkDevice device, T
 
     Mesh square{};
 
-    square.create(physicalDevice, device, transferManager, vertices, indices);
+    meshes.emplace_back(square);
+
+    meshes.back().create(physicalDevice, device, transferManager, vertices, indices);
 
     Mesh triangle{};
 
-    triangle.create(physicalDevice, device, transferManager, vertices1, indices1);
+    meshes.emplace_back(triangle);
 
-    meshes.push_back(square);
-    meshes.push_back(triangle);
+    meshes.back().create(physicalDevice, device, transferManager, vertices1, indices1);
+
+    TransformData transform{};
+
+    transform.model = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0, 0));
+
+    uniformBuffer.create(physicalDevice, device, sizeof(glm::mat4));
+
+    uniformBuffer.upload(&transform);
 }
 
 std::vector<Mesh>& ResourceManager::getMeshes()
 {
     return meshes;
+}
+
+UniformBuffer& ResourceManager::getUniformBuffer()
+{
+    return uniformBuffer;
 }
