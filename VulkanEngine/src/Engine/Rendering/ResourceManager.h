@@ -2,21 +2,17 @@
 
 #include "transferManager.h"
 
-#include "Engine\Core\common.h"
-#include "Engine\Resources\mesh.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
+#include "Engine/Resources/mesh.h"
 #include "Engine/Resources/uniformBuffer.h"
+#include "Engine/Rendering/Graphics/ShaderTypes/transformData.h"
+#include "Engine/Rendering/Graphics/VertexTypes/vertex.h"
+#include "Scene/camera.h"
 
-//TEMP
-struct TransformData
-{
-	glm::mat4 model;
-};
 
 class ResourceManager
 {
 private:
+	//TEMP
 	std::vector<Vertex> vertices;
 	std::vector<Vertex> vertices1;
 
@@ -25,14 +21,15 @@ private:
 
 	std::vector<Mesh> meshes{};
 
-	//TEMP
+	Camera camera{};
 	UniformBuffer uniformBuffer{};
+	//
 
 public:
 	void create(VkPhysicalDevice physicalDevice, VkDevice device, TransferManager& transferManager);
 
-	std::vector<Mesh>& getMeshes();
-
 	//TEMP
+	std::vector<Mesh>& getMeshes();
 	UniformBuffer& getUniformBuffer();
+	//
 };

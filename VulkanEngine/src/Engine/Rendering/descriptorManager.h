@@ -2,7 +2,7 @@
 
 #include <vulkan/vulkan.h>
 #include "Engine/Resources/uniformBuffer.h"
-#include "glm/glm.hpp"
+
 #include <iostream>
 
 class DescriptorManager

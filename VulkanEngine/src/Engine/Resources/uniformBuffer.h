@@ -9,10 +9,14 @@ class UniformBuffer
 private:
 
     Buffer buffer{};
-    void* mappedMemory;
+    void* mappedMemory{};
 
 public:
     VkBuffer get() const;
+
+    VkDeviceSize getSize() const;
+
+    void* getMappedData();
 
     void create(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize size);
 

@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "Utility/assetManager.h"
-#include "Engine/Core/common.h"
+#include "Engine/Rendering/Graphics/VertexTypes/vertex.h"
 
 class GraphicsPipeline
 {

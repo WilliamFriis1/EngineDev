@@ -2,11 +2,12 @@
 
 #include <vulkan\vulkan.h>
 
-#include "Engine/Core/common.h"
 #include "vertexBuffer.h"
 #include "indexBuffer.h"
 #include "stagingBuffer.h"
 #include "Engine/Rendering/transferManager.h"
+#include "Engine/Rendering/Graphics/VertexTypes/vertex.h"
+
 
 class Mesh
 {

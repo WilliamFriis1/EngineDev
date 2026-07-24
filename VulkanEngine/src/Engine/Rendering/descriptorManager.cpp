@@ -79,7 +79,7 @@ void DescriptorManager::update(VkDevice device, const UniformBuffer& uniformBuff
 
 	bufferInfo.buffer = uniformBuffer.get();
 	bufferInfo.offset = 0;
-	bufferInfo.range = sizeof(glm::mat4); //TEMP, size
+	bufferInfo.range = uniformBuffer.getSize();
 
 	VkWriteDescriptorSet writeSet{};
 	writeSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;

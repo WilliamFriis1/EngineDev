@@ -39,9 +39,14 @@ void ResourceManager::create(VkPhysicalDevice physicalDevice, VkDevice device, T
 
     TransformData transform{};
 
-    transform.model = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0, 0));
+    camera.getTransform().translate({ 0,0,3 });
+    camera.update();
 
-    uniformBuffer.create(physicalDevice, device, sizeof(glm::mat4));
+    transform.model = glm::scale(glm::mat4(1.0f), glm::vec3(1.0));
+    transform.view = camera.getViewMatrix();
+    transform.projection = camera.getProjectionMatrix();
+
+    uniformBuffer.create(physicalDevice, device, sizeof(TransformData));
 
     uniformBuffer.upload(&transform);
 }

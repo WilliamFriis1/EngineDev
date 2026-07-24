@@ -51,6 +51,8 @@ Entity will represent a game object, which will be able to use components.
 
 Transform is self explanitory.
 
+Camera own the view and projection matrices, as well as being responsible for updating them.
+
 
 ### Journal
 This journal was started a few days into the project, but will from now on get continous updates.
@@ -143,4 +145,14 @@ I decided to hold of on asset loading, as the vulkan part is not in its "1.0" ve
 - Uniform buffers
 - Preliminary transform struct & entity class
 - Descriptor sets and pools.
+#### ---------------------------------- 
+
+#### 25/07 - 2026
+Full model to clip space works. So far just tests with values not in their correct places, but the camera component is underway.
+UPDATE: Camera now functional, after a big debugging session, which turned out to be a simply flipped axis. As of now, the camera is static and updates it matrices only once, but that will change to dirty flags later on.
+#### Todays work
+- minor folder hierarchy changes
+- model to clip space matrix multiplications
+- camera component
+- view and projection matrices
 #### ---------------------------------- 

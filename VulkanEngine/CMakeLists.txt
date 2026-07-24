@@ -36,7 +36,8 @@ add_executable (VulkanEngine
 	"src/Engine/Resources/mesh.cpp"
 
 	"src/Scene/entity.cpp" 
-	"src/Scene/transform.cpp"  )
+	"src/Scene/transform.cpp"   
+	"src/Scene/camera.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET VulkanEngine PROPERTY CXX_STANDARD 20)
