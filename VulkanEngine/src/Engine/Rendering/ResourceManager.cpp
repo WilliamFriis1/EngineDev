@@ -29,26 +29,30 @@ void ResourceManager::create(VkPhysicalDevice physicalDevice, VkDevice device, T
 
     meshes.emplace_back(square);
 
-    meshes.back().create(physicalDevice, device, transferManager, vertices, indices);
+    meshes.back().create(physicalDevice, device, transferManager, vertices, indices, 0);
 
     Mesh triangle{};
 
     meshes.emplace_back(triangle);
 
-    meshes.back().create(physicalDevice, device, transferManager, vertices1, indices1);
+    meshes.back().create(physicalDevice, device, transferManager, vertices1, indices1, 1);
 
-    TransformData transform{};
+    ObjectData transform1{};
+    ObjectData transform2{};
+
+    CameraData cameraData{};
 
     camera.getTransform().translate({ 0,0,3 });
     camera.update();
 
-    transform.model = glm::scale(glm::mat4(1.0f), glm::vec3(1.0));
-    transform.view = camera.getViewMatrix();
-    transform.projection = camera.getProjectionMatrix();
+    objectData.emplace_back(transform1);
+    objectData.back().model = meshes[0].getTransform().getMatrix();
 
-    uniformBuffer.create(physicalDevice, device, sizeof(TransformData));
+    objectData.emplace_back(transform2);
+    objectData.back().model = meshes[1].getTransform().getMatrix();
 
-    uniformBuffer.upload(&transform);
+    uniformBuffer.create(physicalDevice, device, sizeof(CameraData));
+    storageBuffer.create(physicalDevice, device, sizeof(ObjectData) * objectData.size());
 }
 
 std::vector<Mesh>& ResourceManager::getMeshes()
@@ -56,7 +60,22 @@ std::vector<Mesh>& ResourceManager::getMeshes()
     return meshes;
 }
 
+std::vector<ObjectData>& ResourceManager::getObjects()
+{
+    return objectData;
+}
+
 UniformBuffer& ResourceManager::getUniformBuffer()
 {
     return uniformBuffer;
+}
+
+StorageBuffer& ResourceManager::getStorageBuffer()
+{
+    return storageBuffer;
+}
+
+Camera& ResourceManager::getCamera()
+{
+    return camera;
 }

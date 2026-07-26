@@ -4,7 +4,9 @@
 
 #include "Engine/Resources/mesh.h"
 #include "Engine/Resources/uniformBuffer.h"
-#include "Engine/Rendering/Graphics/ShaderTypes/transformData.h"
+#include "Engine/Resources/storageBuffer.h"
+#include "Engine/Rendering/Graphics/ShaderTypes/objectData.h"
+#include "Engine/Rendering/Graphics/ShaderTypes/cameraData.h"
 #include "Engine/Rendering/Graphics/VertexTypes/vertex.h"
 #include "Scene/camera.h"
 
@@ -23,6 +25,9 @@ private:
 
 	Camera camera{};
 	UniformBuffer uniformBuffer{};
+	StorageBuffer storageBuffer{};
+
+	std::vector<ObjectData> objectData{};
 	//
 
 public:
@@ -30,6 +35,9 @@ public:
 
 	//TEMP
 	std::vector<Mesh>& getMeshes();
+	std::vector<ObjectData>& getObjects();
 	UniformBuffer& getUniformBuffer();
+	StorageBuffer& getStorageBuffer();
+	Camera& getCamera();
 	//
 };

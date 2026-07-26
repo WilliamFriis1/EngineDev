@@ -156,3 +156,12 @@ UPDATE: Camera now functional, after a big debugging session, which turned out t
 - camera component
 - view and projection matrices
 #### ---------------------------------- 
+
+#### 27/07 - 2026
+Push Constants, and storage buffers. Transform are now uploaded through one storagebuffer, while camera data remains in a UBO. Object indicies are communicated through push constants.
+#### Todays work
+- Storage buffer implementation
+- Overhaul of commandpool function record. No longer lives there, lives in VulkanEngine.
+- Improved dynamically uploading several meshes, not done, but a step in the right direction for scalability.
+- Debugging pipeline creation with new descriptor sets.
+#### ---------------------------------- 

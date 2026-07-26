@@ -92,6 +92,7 @@ private:
 
 	//Update
 	void drawFrame();
+	void record(uint32_t imageIndex);
 
 	//Utility
 	bool checkValidationLayerSupport();

@@ -2,6 +2,7 @@
 
 #include <vulkan/vulkan.h>
 #include "Engine/Resources/uniformBuffer.h"
+#include "Engine/Resources/storageBuffer.h"
 
 #include <iostream>
 
@@ -14,11 +15,12 @@ private:
 
 public:
 	VkDescriptorSetLayout getDescriptorLayout() const;
-	VkDescriptorSet getDescriptorSet() const;
+	VkDescriptorSet* getDescriptorSet();
 
 	void create(VkDevice device);
+
 	void cleanup(VkDevice device);
 
-	void update(VkDevice device, const UniformBuffer& uniformBuffer);
+	void update(VkDevice device, const UniformBuffer& uniformBuffer, const StorageBuffer& storageBuffer);
 
 };

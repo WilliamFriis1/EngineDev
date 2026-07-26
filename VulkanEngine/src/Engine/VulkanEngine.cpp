@@ -74,9 +74,7 @@ void VulkanEngine::vulkanInit()
 
 	resourceManager.create(physicalDevice, device, transferManager);
 
-	descriptorManager.update(device, resourceManager.getUniformBuffer());
-
-	commandBufferManager.record(renderPass.get(), swapChain.getExtents(), graphicsPipeline.get(), graphicsPipeline.getLayout(), framebufferManager.get(), descriptorManager.getDescriptorSet(), resourceManager.getMeshes());
+	descriptorManager.update(device, resourceManager.getUniformBuffer(), resourceManager.getStorageBuffer());
 }
 
 void VulkanEngine::cleanupGlfw()
@@ -292,6 +290,8 @@ void VulkanEngine::drawFrame()
 		return;
 	}
 
+	record(imageIndex);
+
 	VkSemaphore renderFinSem = syncManager.getRenderFinished(imageIndex);
 
 	VkFence& imageInFlight = syncManager.getImageInFlight(imageIndex);
@@ -347,6 +347,72 @@ void VulkanEngine::drawFrame()
 	}
 
 	currentFrame = (currentFrame + 1) % SyncManager::MAX_FRAMES_IN_FLIGHT;
+}
+
+void VulkanEngine::record(uint32_t imageIndex)
+{
+	VkClearValue clearColor = { {0.0f, 0.0f, 0.0f, 1.0f} };
+	VkDeviceSize offsets[] = { 0 };
+
+	const VkCommandBuffer& cmd = commandBufferManager.get()[imageIndex];
+	const VkFramebuffer& framebuffer = framebufferManager.get()[imageIndex];
+
+	VkCommandBufferBeginInfo beginInfo{};
+
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+	if (vkBeginCommandBuffer(cmd, &beginInfo) != VK_SUCCESS)
+		throw std::runtime_error("Failed to begin command buffer");
+
+	VkRenderPassBeginInfo renderPassInfo{};
+	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+
+	renderPassInfo.renderPass = renderPass.get();
+	renderPassInfo.framebuffer = framebuffer;
+
+	renderPassInfo.renderArea.offset = { 0, 0 };
+	renderPassInfo.renderArea.extent = swapChain.getExtents();
+
+	renderPassInfo.clearValueCount = 1;
+	renderPassInfo.pClearValues = &clearColor;
+
+	vkCmdBeginRenderPass(cmd, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+	vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.get());
+
+	vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.getLayout(), 0, 1, descriptorManager.getDescriptorSet(), 0, nullptr);
+
+	CameraData cameraData{};
+	const Camera& camera = resourceManager.getCamera();
+
+	cameraData.projection = camera.getProjectionMatrix();
+	cameraData.view = camera.getViewMatrix();
+
+	resourceManager.getUniformBuffer().upload(&cameraData);
+
+	std::vector<ObjectData>& objects = resourceManager.getObjects();
+
+	for (auto& mesh : resourceManager.getMeshes())
+	{
+		objects[mesh.getObjectIndex()].model = mesh.getTransform().getMatrix();
+	}
+
+	resourceManager.getStorageBuffer().upload(objects.data());
+
+	for (auto& mesh : resourceManager.getMeshes())
+	{
+		objects[mesh.getObjectIndex()].model = mesh.getTransform().getMatrix();
+
+		vkCmdPushConstants(cmd, graphicsPipeline.getLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(uint32_t), &mesh.getObjectIndex());
+
+		mesh.bind(cmd);
+		mesh.draw(cmd);
+	}
+
+	vkCmdEndRenderPass(cmd);
+
+	if (vkEndCommandBuffer(cmd) != VK_SUCCESS)
+		throw std::runtime_error("Failed to end command buffer");
 
 }
 
@@ -456,6 +522,7 @@ void VulkanEngine::glfwFramebufferResized(GLFWwindow* window, int width, int hei
 
 	engine->isFramebufferResized = true;
 }
+
 
 // _____________Public_____________
 VulkanEngine::~VulkanEngine()

@@ -37,7 +37,7 @@ add_executable (VulkanEngine
 
 	"src/Scene/entity.cpp" 
 	"src/Scene/transform.cpp"   
-	"src/Scene/camera.cpp")
+	"src/Scene/camera.cpp" "src/Engine/Resources/storageBuffer.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET VulkanEngine PROPERTY CXX_STANDARD 20)

@@ -7,6 +7,7 @@
 #include "stagingBuffer.h"
 #include "Engine/Rendering/transferManager.h"
 #include "Engine/Rendering/Graphics/VertexTypes/vertex.h"
+#include "Scene/transform.h"
 
 
 class Mesh
@@ -15,16 +16,19 @@ class Mesh
 private:
 	VertexBuffer vertexBuffer{};
 	IndexBuffer indexBuffer{};
+	Transform transform{};
 
 	uint32_t indexCount;
+	uint32_t objectIndex;
 
 public:
-	VkBuffer getVertexBuffer() const;
-	VkBuffer getIndexBuffer() const;
+	Transform& getTransform();
+	const uint32_t& getObjectIndex() const;
 
-	uint32_t getIndexCount() const;
-
-	void create(VkPhysicalDevice physicalDevice, VkDevice device, TransferManager& transferManager, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
+	void create(VkPhysicalDevice physicalDevice, VkDevice device, TransferManager& transferManager, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, uint32_t objectIndex);
 
 	void cleanup();
+
+	void draw(VkCommandBuffer cmd);
+	void bind(VkCommandBuffer cmd);
 };

@@ -1,22 +1,19 @@
 #include "mesh.h"
 
-VkBuffer Mesh::getVertexBuffer() const
+Transform& Mesh::getTransform()
 {
-    return vertexBuffer.get();
+    return transform;
 }
 
-VkBuffer Mesh::getIndexBuffer() const
+const uint32_t& Mesh::getObjectIndex() const
 {
-    return indexBuffer.get();
+    return objectIndex;
 }
 
-uint32_t Mesh::getIndexCount() const
+void Mesh::create(VkPhysicalDevice physicalDevice, VkDevice device, TransferManager& transferManager, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, uint32_t objectIndex)
 {
-    return indexCount;
-}
+    this->objectIndex = objectIndex;
 
-void Mesh::create(VkPhysicalDevice physicalDevice, VkDevice device, TransferManager& transferManager, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices)
-{
     indexCount = static_cast<uint32_t>(indices.size());
 
     VkDeviceSize sizeVert = sizeof(vertices[0]) * vertices.size();
@@ -45,4 +42,18 @@ void Mesh::cleanup()
 {
     vertexBuffer.cleanup();
     indexBuffer.cleanup();
+}
+
+void Mesh::draw(VkCommandBuffer cmd)
+{
+    vkCmdDrawIndexed(cmd, indexCount, 1, 0, 0, 0);
+}
+
+void Mesh::bind(VkCommandBuffer cmd)
+{
+    VkBuffer buffers[] = { vertexBuffer.get()};
+    VkDeviceSize offsets[] = { 0 };
+
+    vkCmdBindVertexBuffers(cmd, 0, 1, buffers, offsets);
+    vkCmdBindIndexBuffer(cmd, indexBuffer.get(), 0, VK_INDEX_TYPE_UINT32);
 }
