@@ -5,10 +5,11 @@
 #include "Engine/Resources/mesh.h"
 #include "Engine/Resources/uniformBuffer.h"
 #include "Engine/Resources/storageBuffer.h"
-#include "Engine/Rendering/Graphics/ShaderTypes/objectData.h"
-#include "Engine/Rendering/Graphics/ShaderTypes/cameraData.h"
+#include "Engine/Rendering/Graphics/RenderingTypes/objectData.h"
+#include "Engine/Rendering/Graphics/RenderingTypes/cameraData.h"
 #include "Engine/Rendering/Graphics/VertexTypes/vertex.h"
 #include "Scene/camera.h"
+#include "Scene/scene.h"
 
 
 class ResourceManager
@@ -24,20 +25,11 @@ private:
 	std::vector<Mesh> meshes{};
 
 	Camera camera{};
-	UniformBuffer uniformBuffer{};
-	StorageBuffer storageBuffer{};
-
-	std::vector<ObjectData> objectData{};
+	Scene scene{};
 	//
 
 public:
 	void create(VkPhysicalDevice physicalDevice, VkDevice device, TransferManager& transferManager);
 
-	//TEMP
-	std::vector<Mesh>& getMeshes();
-	std::vector<ObjectData>& getObjects();
-	UniformBuffer& getUniformBuffer();
-	StorageBuffer& getStorageBuffer();
-	Camera& getCamera();
-	//
+	Scene& getScene();
 };

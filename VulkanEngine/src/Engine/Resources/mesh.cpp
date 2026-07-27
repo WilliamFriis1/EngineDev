@@ -1,19 +1,8 @@
 #include "mesh.h"
 
-Transform& Mesh::getTransform()
-{
-    return transform;
-}
-
-const uint32_t& Mesh::getObjectIndex() const
-{
-    return objectIndex;
-}
 
 void Mesh::create(VkPhysicalDevice physicalDevice, VkDevice device, TransferManager& transferManager, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, uint32_t objectIndex)
 {
-    this->objectIndex = objectIndex;
-
     indexCount = static_cast<uint32_t>(indices.size());
 
     VkDeviceSize sizeVert = sizeof(vertices[0]) * vertices.size();

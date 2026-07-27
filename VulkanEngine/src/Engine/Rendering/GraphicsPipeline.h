@@ -9,7 +9,7 @@
 
 #include "Utility/assetManager.h"
 #include "Engine/Rendering/Graphics/VertexTypes/vertex.h"
-#include "Engine/Rendering/Graphics/ShaderTypes/pushconstantData.h"
+#include "Engine/Rendering/Graphics/RenderingTypes/pushconstantData.h"
 
 class GraphicsPipeline
 {

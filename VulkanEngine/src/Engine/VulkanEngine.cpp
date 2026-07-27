@@ -35,11 +35,12 @@ void VulkanEngine::vulkanInit()
 {
 	createInstance();
 	debugMessenger.setupDebugMessenger(vkInstance);
+
 	createSurface();
 	selectPhysicalDevice();
 	createLogicalDevice();
 
-	swapChain.create
+	swapchain.create
 	(
 		physicalDevice, 
 		device, 
@@ -50,31 +51,12 @@ void VulkanEngine::vulkanInit()
 		swapChainSupportDetails
 	);
 
-	renderPass.create(device, swapChain.getImageFormat());
-
-	framebufferManager.createFramebuffers
-	(
-		device,
-		renderPass.get(),
-		swapChain.getImageViews(),
-		swapChain.getExtents()
-	);
-
-	descriptorManager.create(device);
-
-	graphicsPipeline.create(device, swapChain.getExtents(), renderPass.get(), descriptorManager.getDescriptorLayout());
-
 	commandPool.create(device, queueFamilyIndices.graphicsFamily.value());
 
-	commandBufferManager.create(device, commandPool.get(), static_cast<uint32_t>(framebufferManager.getCount()));
-
-	syncManager.create(device, static_cast<uint32_t>(swapChain.getImageCount()));
-
 	transferManager.create(device, commandPool.get(), graphicsQueue);
-
 	resourceManager.create(physicalDevice, device, transferManager);
 
-	descriptorManager.update(device, resourceManager.getUniformBuffer(), resourceManager.getStorageBuffer());
+	renderer.create(physicalDevice, device, &swapchain, commandPool, graphicsQueue, presentQueue, 2);
 }
 
 void VulkanEngine::cleanupGlfw()
@@ -208,7 +190,7 @@ void VulkanEngine::selectPhysicalDevice()
 	for (const auto& device : devices)
 	{
 		auto indices = findQueueFamilies(device);
-		auto swapSupport = swapChain.isDeviceSuitable(device, surface);
+		auto swapSupport = swapchain.isDeviceSuitable(device, surface);
 
 		if (indices.isComplete() && swapSupport.suitable)
 		{
@@ -251,8 +233,8 @@ void VulkanEngine::createLogicalDevice()
 
 	VkDeviceCreateInfo createInfo{};
 
-	createInfo.enabledExtensionCount = static_cast<uint32_t>(swapChain.deviceExtensions.size());
-	createInfo.ppEnabledExtensionNames = swapChain.deviceExtensions.data();
+	createInfo.enabledExtensionCount = static_cast<uint32_t>(swapchain.deviceExtensions.size());
+	createInfo.ppEnabledExtensionNames = swapchain.deviceExtensions.data();
 
 	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 	createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
@@ -270,150 +252,6 @@ void VulkanEngine::createLogicalDevice()
 
 	std::cout << "Graphics Queue Family: " << queueFamilyIndices.graphicsFamily.value() << "\n";
 	std::cout << "Present Queue Family: " << queueFamilyIndices.presentFamily.value() << "\n";
-}
-
-void VulkanEngine::drawFrame()
-{
-	uint32_t imageIndex;
-
-	VkFence fence = syncManager.getFramesInFlight(currentFrame);
-	VkSemaphore imageAvailSem = syncManager.getImageAvailable(currentFrame);
-
-	vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX);
-	vkResetFences(device, 1, &fence);
-
-	VkResult result = vkAcquireNextImageKHR(device, swapChain.get(), UINT64_MAX, imageAvailSem, VK_NULL_HANDLE, &imageIndex);
-
-	if (result == VK_ERROR_OUT_OF_DATE_KHR)
-	{
-		recreateSwapChain();
-		return;
-	}
-
-	record(imageIndex);
-
-	VkSemaphore renderFinSem = syncManager.getRenderFinished(imageIndex);
-
-	VkFence& imageInFlight = syncManager.getImageInFlight(imageIndex);
-
-	if (imageInFlight != VK_NULL_HANDLE)
-	{
-		vkWaitForFences(device, 1, &imageInFlight, VK_TRUE, UINT64_MAX);
-	}
-
-	imageInFlight = fence;
-
-	VkCommandBuffer commandBuffer = commandBufferManager.get()[imageIndex];
-
-	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-
-	VkSubmitInfo submitInfo{};
-	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
-	submitInfo.waitSemaphoreCount = 1;
-	submitInfo.pWaitSemaphores = &imageAvailSem;
-	submitInfo.pWaitDstStageMask = waitStages;
-
-	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &commandBuffer;
-
-	submitInfo.signalSemaphoreCount = 1;
-	submitInfo.pSignalSemaphores = &renderFinSem;
-
-	if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, fence) != VK_SUCCESS)
-	{
-		throw std::runtime_error("Failed to submit draw command buffer");
-	}
-
-	VkPresentInfoKHR presentInfo{};
-	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-
-	presentInfo.waitSemaphoreCount = 1;
-	presentInfo.pWaitSemaphores = &renderFinSem;
-
-	VkSwapchainKHR swapChains[] = { swapChain.get() };
-
-	presentInfo.swapchainCount = 1;
-	presentInfo.pSwapchains = swapChains;
-
-	presentInfo.pImageIndices = &imageIndex;
-
-	result = vkQueuePresentKHR(presentQueue, &presentInfo);
-
-	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || isFramebufferResized)
-	{
-		isFramebufferResized = false;
-		recreateSwapChain();
-	}
-
-	currentFrame = (currentFrame + 1) % SyncManager::MAX_FRAMES_IN_FLIGHT;
-}
-
-void VulkanEngine::record(uint32_t imageIndex)
-{
-	VkClearValue clearColor = { {0.0f, 0.0f, 0.0f, 1.0f} };
-	VkDeviceSize offsets[] = { 0 };
-
-	const VkCommandBuffer& cmd = commandBufferManager.get()[imageIndex];
-	const VkFramebuffer& framebuffer = framebufferManager.get()[imageIndex];
-
-	VkCommandBufferBeginInfo beginInfo{};
-
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-
-	if (vkBeginCommandBuffer(cmd, &beginInfo) != VK_SUCCESS)
-		throw std::runtime_error("Failed to begin command buffer");
-
-	VkRenderPassBeginInfo renderPassInfo{};
-	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-
-	renderPassInfo.renderPass = renderPass.get();
-	renderPassInfo.framebuffer = framebuffer;
-
-	renderPassInfo.renderArea.offset = { 0, 0 };
-	renderPassInfo.renderArea.extent = swapChain.getExtents();
-
-	renderPassInfo.clearValueCount = 1;
-	renderPassInfo.pClearValues = &clearColor;
-
-	vkCmdBeginRenderPass(cmd, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-	vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.get());
-
-	vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.getLayout(), 0, 1, descriptorManager.getDescriptorSet(), 0, nullptr);
-
-	CameraData cameraData{};
-	const Camera& camera = resourceManager.getCamera();
-
-	cameraData.projection = camera.getProjectionMatrix();
-	cameraData.view = camera.getViewMatrix();
-
-	resourceManager.getUniformBuffer().upload(&cameraData);
-
-	std::vector<ObjectData>& objects = resourceManager.getObjects();
-
-	for (auto& mesh : resourceManager.getMeshes())
-	{
-		objects[mesh.getObjectIndex()].model = mesh.getTransform().getMatrix();
-	}
-
-	resourceManager.getStorageBuffer().upload(objects.data());
-
-	for (auto& mesh : resourceManager.getMeshes())
-	{
-		objects[mesh.getObjectIndex()].model = mesh.getTransform().getMatrix();
-
-		vkCmdPushConstants(cmd, graphicsPipeline.getLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(uint32_t), &mesh.getObjectIndex());
-
-		mesh.bind(cmd);
-		mesh.draw(cmd);
-	}
-
-	vkCmdEndRenderPass(cmd);
-
-	if (vkEndCommandBuffer(cmd) != VK_SUCCESS)
-		throw std::runtime_error("Failed to end command buffer");
-
 }
 
 bool VulkanEngine::checkValidationLayerSupport()
@@ -491,12 +329,12 @@ void VulkanEngine::recreateSwapChain()
 	std::cout << "Started recreation of swapchain...\n";
 	vkDeviceWaitIdle(device);
 
-	framebufferManager.cleanupFramebuffers(device);
-	swapChain.cleanup(device);
+	renderer.destroySwapchainResources();
+	swapchain.cleanup(device);
 
-	swapChainSupportDetails = swapChain.isDeviceSuitable(physicalDevice, surface).swapChainSupport;
+	swapChainSupportDetails = swapchain.isDeviceSuitable(physicalDevice, surface).swapChainSupport;
 
-	swapChain.create
+	swapchain.create
 	(
 		physicalDevice,
 		device,
@@ -507,13 +345,7 @@ void VulkanEngine::recreateSwapChain()
 		swapChainSupportDetails
 	);
 
-	framebufferManager.createFramebuffers
-	(
-		device,
-		renderPass.get(),
-		swapChain.getImageViews(),
-		swapChain.getExtents()
-	);
+	renderer.createSwapchainResources();
 }
 
 void VulkanEngine::glfwFramebufferResized(GLFWwindow* window, int width, int height)
@@ -527,13 +359,10 @@ void VulkanEngine::glfwFramebufferResized(GLFWwindow* window, int width, int hei
 // _____________Public_____________
 VulkanEngine::~VulkanEngine()
 {
-	syncManager.cleanup(device);
-	commandBufferManager.cleanup();
+
 	commandPool.cleanup(device);
-	graphicsPipeline.cleanup(device);
-	framebufferManager.cleanupFramebuffers(device);
-	renderPass.cleanup(device);
-	swapChain.cleanup(device);
+
+	swapchain.cleanup(device);
 
 	cleanupDevice();
 	cleanupSurface();
@@ -558,7 +387,13 @@ void VulkanEngine::run()
 	{
 		glfwPollEvents();
 
-		drawFrame();
+		resourceManager.getScene().buildRenderQueue(renderQueue);
+		resourceManager.getScene().buildObjectBuffer(sceneObjs);
+
+		if (renderer.drawFrame(renderQueue, sceneObjs, *resourceManager.getScene().activeCamera) == Renderer::DRAW_FAIL || isFramebufferResized)
+		{
+			recreateSwapChain();
+		}
 	}
 }
 

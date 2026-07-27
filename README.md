@@ -32,6 +32,8 @@ ResourceManager will be responsible for GPU resources, however, currently instan
 
 DescriptorManager implements the necessary descriptor sets, layouts, and pools, while providing an interface for easy updating
 
+Renderer is in charge of the whole rendering process, as well as owning relevant objects needed for rendering.
+
 #### Utility
 AssetManager is a utility class for correct filepath usage.
 
@@ -165,3 +167,11 @@ Push Constants, and storage buffers. Transform are now uploaded through one stor
 - Improved dynamically uploading several meshes, not done, but a step in the right direction for scalability.
 - Debugging pipeline creation with new descriptor sets.
 #### ---------------------------------- 
+
+#### 28/07 - 2026
+Big refactor. Moved every rendering part into its own class, seperated som resposibilities from the renderer to scene. Added dirty flags to transform and camera, to ensure proper use.
+#### Todays work
+- Architectural overhaul of VulkanEngine
+- Expanded scene class resposibilities
+- Dirty flags to transform and camera
+####

@@ -24,58 +24,28 @@ void ResourceManager::create(VkPhysicalDevice physicalDevice, VkDevice device, T
 
     indices1 = { 0, 1, 2, };
 
+    camera.getTransform().translate({ 0,0,3 });
 
-    Mesh square{};
+    Entity square{};
 
-    meshes.emplace_back(square);
-
+    meshes.emplace_back();
     meshes.back().create(physicalDevice, device, transferManager, vertices, indices, 0);
 
-    Mesh triangle{};
+    Entity triangle{};
 
-    meshes.emplace_back(triangle);
-
+    meshes.emplace_back();
     meshes.back().create(physicalDevice, device, transferManager, vertices1, indices1, 1);
 
-    ObjectData transform1{};
-    ObjectData transform2{};
+    square.mesh = &meshes[0];
+    triangle.mesh = &meshes[1];
 
-    CameraData cameraData{};
+    scene.entities.emplace_back(square);
+    scene.entities.emplace_back(triangle);
 
-    camera.getTransform().translate({ 0,0,3 });
-    camera.update();
-
-    objectData.emplace_back(transform1);
-    objectData.back().model = meshes[0].getTransform().getMatrix();
-
-    objectData.emplace_back(transform2);
-    objectData.back().model = meshes[1].getTransform().getMatrix();
-
-    uniformBuffer.create(physicalDevice, device, sizeof(CameraData));
-    storageBuffer.create(physicalDevice, device, sizeof(ObjectData) * objectData.size());
+    scene.activeCamera = &camera;
 }
 
-std::vector<Mesh>& ResourceManager::getMeshes()
+Scene& ResourceManager::getScene()
 {
-    return meshes;
-}
-
-std::vector<ObjectData>& ResourceManager::getObjects()
-{
-    return objectData;
-}
-
-UniformBuffer& ResourceManager::getUniformBuffer()
-{
-    return uniformBuffer;
-}
-
-StorageBuffer& ResourceManager::getStorageBuffer()
-{
-    return storageBuffer;
-}
-
-Camera& ResourceManager::getCamera()
-{
-    return camera;
+    return scene;
 }

@@ -7,13 +7,13 @@ class Camera
 {
 private:
 
-	glm::mat4 viewMatrix;
-	glm::mat4 projectionMatrix;
+	mutable glm::mat4 viewMatrix;
+	mutable glm::mat4 projectionMatrix;
 
 	Transform transform{};
 
-	void updateView();
-	void updateProj();
+	void updateView() const;
+	void updateProj() const;
 
 public:
 	//Default values
@@ -22,11 +22,12 @@ public:
 	float nearPlane = 0.1f;
 	float farPlane = 100.0f;
 
+	mutable bool dirtyView = true;
+	mutable bool dirtyProj = true;
+
 	const glm::mat4& getViewMatrix() const;
 	const glm::mat4& getProjectionMatrix() const;
 
 	const Transform& getTransform() const;
 	Transform& getTransform();
-
-	void update();
 };

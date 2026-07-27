@@ -2,7 +2,7 @@
 
 // _____________Private_____________
 
-void SwapChain::createImageViews(VkDevice device)
+void Swapchain::createImageViews(VkDevice device)
 {
 	imageViews.resize(images.size());
 
@@ -36,7 +36,7 @@ void SwapChain::createImageViews(VkDevice device)
 	}
 }
 
-SwapChainSupportDetails SwapChain::querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface)
+SwapChainSupportDetails Swapchain::querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface)
 {
 	SwapChainSupportDetails details{};
 
@@ -74,7 +74,7 @@ SwapChainSupportDetails SwapChain::querySwapChainSupport(VkPhysicalDevice device
 	return details;
 }
 
-bool SwapChain::checkDeviceExtensionSupport(VkPhysicalDevice device)
+bool Swapchain::checkDeviceExtensionSupport(VkPhysicalDevice device)
 {
 	uint32_t extensionCount;
 	vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
@@ -107,32 +107,32 @@ bool SwapChain::checkDeviceExtensionSupport(VkPhysicalDevice device)
 
 // _____________Public_____________
 
-const VkSwapchainKHR& SwapChain::get() const
+const VkSwapchainKHR& Swapchain::get() const
 {
 	return swapChain;
 }
 
-VkFormat SwapChain::getImageFormat() const
+VkFormat Swapchain::getImageFormat() const
 {
 	return imageFormat;
 }
 
-VkExtent2D SwapChain::getExtents() const
+VkExtent2D Swapchain::getExtents() const
 {
 	return extent;
 }
 
-std::vector<VkImageView> SwapChain::getImageViews() const
+std::vector<VkImageView> Swapchain::getImageViews() const
 {
 	return imageViews;
 }
 
-size_t SwapChain::getImageCount() const
+size_t Swapchain::getImageCount() const
 {
 	return images.size();
 }
 
-void SwapChain::create(VkPhysicalDevice physicalDevice, VkDevice device, VkSurfaceKHR surface, GLFWwindow* window, uint32_t graphicsFamily, uint32_t presentFamily, const SwapChainSupportDetails &details)
+void Swapchain::create(VkPhysicalDevice physicalDevice, VkDevice device, VkSurfaceKHR surface, GLFWwindow* window, uint32_t graphicsFamily, uint32_t presentFamily, const SwapChainSupportDetails &details)
 {
 	auto surfaceFormat = chooseSurfaceFormat(details.formats);
 	auto presentMode = choosePresentMode(details.presentModes);
@@ -203,7 +203,7 @@ void SwapChain::create(VkPhysicalDevice physicalDevice, VkDevice device, VkSurfa
 	createImageViews(device);
 }
 
-void SwapChain::cleanup(VkDevice device)
+void Swapchain::cleanup(VkDevice device)
 {
 	for (auto imageView : imageViews)
 	{
@@ -213,7 +213,7 @@ void SwapChain::cleanup(VkDevice device)
 	vkDestroySwapchainKHR(device, swapChain, nullptr);
 }
 
-DeviceSuitability SwapChain::isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface)
+DeviceSuitability Swapchain::isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface)
 {
 	auto details = querySwapChainSupport(device, surface);
 	bool suitable = checkDeviceExtensionSupport(device) && !details.formats.empty() && !details.presentModes.empty();
@@ -221,7 +221,7 @@ DeviceSuitability SwapChain::isDeviceSuitable(VkPhysicalDevice device, VkSurface
 	return DeviceSuitability{ suitable, details };
 }
 
-VkSurfaceFormatKHR SwapChain::chooseSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& formats)
+VkSurfaceFormatKHR Swapchain::chooseSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& formats)
 {
 	if (formats.empty())
 		throw std::runtime_error("Format vector is empty!\n");
@@ -235,7 +235,7 @@ VkSurfaceFormatKHR SwapChain::chooseSurfaceFormat(const std::vector<VkSurfaceFor
 	return formats[0];
 }
 
-VkPresentModeKHR SwapChain::choosePresentMode(const std::vector<VkPresentModeKHR>& presentModes)
+VkPresentModeKHR Swapchain::choosePresentMode(const std::vector<VkPresentModeKHR>& presentModes)
 {
 	if (presentModes.empty())
 		throw std::runtime_error("Present modes vector is empty!\n");
@@ -249,7 +249,7 @@ VkPresentModeKHR SwapChain::choosePresentMode(const std::vector<VkPresentModeKHR
 	return VK_PRESENT_MODE_FIFO_KHR;
 }
 
-VkExtent2D SwapChain::chooseExtent(GLFWwindow* window, const VkSurfaceCapabilitiesKHR& capabilities)
+VkExtent2D Swapchain::chooseExtent(GLFWwindow* window, const VkSurfaceCapabilitiesKHR& capabilities)
 {
 	if (capabilities.currentExtent.width != UINT32_MAX)
 		return capabilities.currentExtent;

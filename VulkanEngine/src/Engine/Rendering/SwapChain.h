@@ -20,7 +20,7 @@ struct DeviceSuitability
 	SwapChainSupportDetails swapChainSupport;
 };
 
-class SwapChain
+class Swapchain
 {
 private:
 
@@ -52,8 +52,8 @@ public:
 	size_t getImageCount() const;
 
 
-	SwapChain() = default;
-	~SwapChain() = default;
+	Swapchain() = default;
+	~Swapchain() = default;
 
 	void create(VkPhysicalDevice physicalDevice, VkDevice device, VkSurfaceKHR surface, GLFWwindow* window, uint32_t graphicsFamily, uint32_t presentFamily, const SwapChainSupportDetails &details);
 

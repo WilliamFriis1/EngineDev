@@ -2,15 +2,12 @@
 #include <GLFW/glfw3.h>
 
 #include "Engine/Rendering/swapChain.h"
-#include "Engine/Rendering/renderPass.h"
-#include "Engine/Rendering/framebufferManager.h"
-#include "Engine/Rendering/graphicsPipeline.h"
 #include "Engine/Rendering/commandPool.h"
-#include "Engine/Rendering/commandBufferManager.h"
-#include "Engine/Rendering/syncManager.h"
 #include "Engine/Rendering/transferManager.h"
 #include "Engine/Rendering/resourceManager.h"
-#include "Engine/Rendering/descriptorManager.h"
+#include "Engine/Rendering/renderer.h"
+#include "Engine/Rendering/renderQueue.h"
+#include "Engine/Rendering/Graphics/RenderingTypes/objectData.h"
 
 #include "Utility/debugMessenger.h"
 #include "Utility/assetManager.h"
@@ -48,14 +45,9 @@ private:
 
 	ResourceManager resourceManager{};
 	TransferManager transferManager{};
-	SyncManager syncManager{};
-	CommandBufferManager commandBufferManager{};
 	CommandPool commandPool{};
-	GraphicsPipeline graphicsPipeline{};
-	SwapChain swapChain{};
-	RenderPass renderPass{};
-	FramebufferManager framebufferManager{};
-	DescriptorManager descriptorManager{};
+	Swapchain swapchain{};
+	Renderer renderer{};
 
 	DebugMessenger debugMessenger{};
 
@@ -72,7 +64,8 @@ private:
 	VkQueue graphicsQueue = VK_NULL_HANDLE;
 	VkQueue presentQueue = VK_NULL_HANDLE;
 
-	uint32_t currentFrame = 0;
+	RenderQueue renderQueue{};
+	std::vector<ObjectData> sceneObjs{};
 
 	//Initialization
 	void windowInit();
@@ -89,10 +82,6 @@ private:
 	void createSurface();
 	void selectPhysicalDevice();
 	void createLogicalDevice();
-
-	//Update
-	void drawFrame();
-	void record(uint32_t imageIndex);
 
 	//Utility
 	bool checkValidationLayerSupport();
