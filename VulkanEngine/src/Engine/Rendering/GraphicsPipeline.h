@@ -1,26 +1,19 @@
 #pragma once
-#include <vulkan/vulkan.h>
 
-#include <iostream>
-#include <fstream>
-#include <filesystem>
-#include <stdexcept>
-#include <vector>
-
-#include "Utility/assetManager.h"
+#include "Utility/assetLoader.h"
 #include "Engine/Rendering/Graphics/VertexTypes/vertex.h"
 #include "Engine/Rendering/Graphics/RenderingTypes/pushconstantData.h"
+
+#include <vulkan/vulkan.h>
 
 class GraphicsPipeline
 {
 private:
 
+	AssetLoader assetLoader{};
+
 	VkPipeline graphicsPipeline = VK_NULL_HANDLE;
 	VkPipelineLayout pipelineLayout = VK_NULL_HANDLE;
-
-	static std::vector<char> readFile(const std::string& filename);
-
-	VkShaderModule createShaderModule(VkDevice device, const std::vector<char>& code);
 
 public:
 	//Getters

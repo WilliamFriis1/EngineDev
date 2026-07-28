@@ -5,4 +5,5 @@
 struct ObjectData
 {
 	glm::mat4 model;
+	uint32_t materialIndex;
 };

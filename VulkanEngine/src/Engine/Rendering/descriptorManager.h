@@ -5,6 +5,7 @@
 #include "Engine/Resources/storageBuffer.h"
 
 #include <iostream>
+#include <vector>
 
 class DescriptorManager
 {
@@ -21,6 +22,6 @@ public:
 
 	void cleanup(VkDevice device);
 
-	void update(VkDevice device, const UniformBuffer& uniformBuffer, const StorageBuffer& storageBuffer);
+	void update(VkDevice device, const UniformBuffer& uniformBuffer, const std::vector<StorageBuffer>& storageBuffer);
 
 };

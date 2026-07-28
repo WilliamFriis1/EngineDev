@@ -12,6 +12,8 @@
 #include "Utility/debugMessenger.h"
 #include "Utility/assetManager.h"
 
+#include "Scene/sceneManager.h"
+
 #include <iostream>
 #include <vector>
 #include <optional>
@@ -43,6 +45,7 @@ private:
 		"VK_LAYER_KHRONOS_validation"
 	};
 
+	SceneManager sceneManager{};
 	ResourceManager resourceManager{};
 	TransferManager transferManager{};
 	CommandPool commandPool{};
@@ -66,6 +69,7 @@ private:
 
 	RenderQueue renderQueue{};
 	std::vector<ObjectData> sceneObjs{};
+	std::vector<MaterialData> materials{};
 
 	//Initialization
 	void windowInit();

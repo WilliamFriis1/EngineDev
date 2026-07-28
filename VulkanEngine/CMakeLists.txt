@@ -25,6 +25,8 @@ add_executable (VulkanEngine
 	"src/Engine/Rendering/transferManager.cpp"
 	"src/Engine/Rendering/resourceManager.cpp"
 	"src/Engine/Rendering/descriptorManager.cpp"
+	"src/Engine/Rendering/renderer.cpp"
+	"src/Engine/Rendering/renderQueue.cpp"
 
 	"src/Utility/assetManager.cpp"
 
@@ -34,10 +36,13 @@ add_executable (VulkanEngine
 	"src/Engine/Resources/indexBuffer.cpp"
 	"src/Engine/Resources/uniformBuffer.cpp"
 	"src/Engine/Resources/mesh.cpp"
+	"src/Engine/Resources/storageBuffer.cpp"
 
 	"src/Scene/entity.cpp" 
 	"src/Scene/transform.cpp"   
-	"src/Scene/camera.cpp" "src/Engine/Resources/storageBuffer.cpp" "src/Engine/Rendering/renderer.cpp" "src/Scene/scene.cpp"   "src/Engine/Rendering/renderQueue.cpp")
+	"src/Scene/camera.cpp"   
+	"src/Scene/scene.cpp"    
+	"src/Scene/material.cpp" "src/Scene/texture.h" "src/Scene/texture.cpp" "src/Scene/sceneManager.cpp" "src/Utility/assetLoader.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET VulkanEngine PROPERTY CXX_STANDARD 20)

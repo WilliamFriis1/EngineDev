@@ -1,6 +1,6 @@
 #include "renderer.h"
 
-void Renderer::record(uint32_t imageIndex, const RenderQueue& renderQueue, const std::vector<ObjectData>& objs, const Camera& camera)
+void Renderer::record(uint32_t imageIndex, const RenderQueue& renderQueue, const std::vector<ObjectData>& objs, const std::vector<MaterialData>& materials, const Camera& camera)
 {
 	VkClearValue clearColor = { {0.0f, 0.0f, 0.0f, 1.0f} };
 	VkDeviceSize offsets[] = { 0 };
@@ -38,8 +38,9 @@ void Renderer::record(uint32_t imageIndex, const RenderQueue& renderQueue, const
 	cameraData.projection = camera.getProjectionMatrix();
 	cameraData.view = camera.getViewMatrix();
 
-	uniformBuffer.upload(&cameraData);
-	storageBuffer.upload(objs.data());
+	cameraBuffer.upload(&cameraData);
+	objectBuffer.upload(objs.data());
+	materialBuffer.upload(materials.data());
 
 	for (auto& cmd : renderQueue.get())
 	{
@@ -56,7 +57,7 @@ void Renderer::record(uint32_t imageIndex, const RenderQueue& renderQueue, const
 
 }
 
-void Renderer::create(VkPhysicalDevice physicalDevice, VkDevice device, Swapchain* swapchain, const CommandPool& commandPool, VkQueue graphicsQueue, VkQueue presentQueue, uint32_t maxObjects)
+void Renderer::create(VkPhysicalDevice physicalDevice, VkDevice device, Swapchain* swapchain, const CommandPool& commandPool, VkQueue graphicsQueue, VkQueue presentQueue, uint32_t maxObjects, uint32_t maxMaterials)
 {
 	this->swapchain = swapchain;
 	this->device = device;
@@ -81,10 +82,14 @@ void Renderer::create(VkPhysicalDevice physicalDevice, VkDevice device, Swapchai
 
 	syncManager.create(device, static_cast<uint32_t>(swapchain->getImageCount()));
 
-	uniformBuffer.create(physicalDevice, device, sizeof(CameraData));
-	storageBuffer.create(physicalDevice, device, sizeof(ObjectData) * maxObjects);
+	cameraBuffer.create(physicalDevice, device, sizeof(CameraData));
+	objectBuffer.create(physicalDevice, device, sizeof(ObjectData) * maxObjects);
+	materialBuffer.create(physicalDevice, device, sizeof(MaterialData) * maxMaterials);
 
-	descriptorManager.update(device, uniformBuffer, storageBuffer);
+	storageBuffers.emplace_back(objectBuffer);
+	storageBuffers.emplace_back(materialBuffer);
+
+	descriptorManager.update(device, cameraBuffer, storageBuffers);
 }
 
 void Renderer::cleanup()
@@ -110,7 +115,7 @@ void Renderer::destroySwapchainResources()
 {
 	framebufferManager.cleanupFramebuffers(device);
 }
-Renderer::DrawStatus Renderer::drawFrame( const RenderQueue& renderQueue, const std::vector<ObjectData>& objs, const Camera& camera)
+Renderer::DrawStatus Renderer::drawFrame( const RenderQueue& renderQueue, const std::vector<ObjectData>& objs, const std::vector<MaterialData>& materials, const Camera& camera)
 {
 	uint32_t imageIndex;
 
@@ -127,7 +132,7 @@ Renderer::DrawStatus Renderer::drawFrame( const RenderQueue& renderQueue, const 
 		return DRAW_FAIL;
 	}
 
-	record(imageIndex, renderQueue, objs, camera);
+	record(imageIndex, renderQueue, objs, materials, camera);
 
 	VkSemaphore renderFinSem = syncManager.getRenderFinished(imageIndex);
 

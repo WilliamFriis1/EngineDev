@@ -5,31 +5,22 @@
 #include "Engine/Resources/mesh.h"
 #include "Engine/Resources/uniformBuffer.h"
 #include "Engine/Resources/storageBuffer.h"
-#include "Engine/Rendering/Graphics/RenderingTypes/objectData.h"
-#include "Engine/Rendering/Graphics/RenderingTypes/cameraData.h"
-#include "Engine/Rendering/Graphics/VertexTypes/vertex.h"
-#include "Scene/camera.h"
-#include "Scene/scene.h"
+#include "Engine/Resources/vertexBuffer.h"
+#include "Engine/Resources/indexBuffer.h"
+
+
+#include <vulkan/vulkan.h>
+#include <vector>
 
 
 class ResourceManager
 {
 private:
-	//TEMP
-	std::vector<Vertex> vertices;
-	std::vector<Vertex> vertices1;
-
-	std::vector<uint32_t> indices;
-	std::vector<uint32_t> indices1;
-
-	std::vector<Mesh> meshes{};
-
-	Camera camera{};
-	Scene scene{};
-	//
+	std::vector<std::shared_ptr<VertexBuffer>> vertexBuffers;
+	std::vector<std::shared_ptr<IndexBuffer>> indexBuffers;
+	std::vector<std::shared_ptr<Mesh>> meshes;
 
 public:
 	void create(VkPhysicalDevice physicalDevice, VkDevice device, TransferManager& transferManager);
-
-	Scene& getScene();
+	std::weak_ptr<VertexBuffer> getVertexBuffer(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize size);
 };

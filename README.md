@@ -37,6 +37,8 @@ Renderer is in charge of the whole rendering process, as well as owning relevant
 #### Utility
 AssetManager is a utility class for correct filepath usage.
 
+AssetLoader is for loading assets like shaders or models.
+
 DebugMessenger is a utility class for the validation layers.
 
 #### Resources
@@ -54,6 +56,8 @@ Entity will represent a game object, which will be able to use components.
 Transform is self explanitory.
 
 Camera own the view and projection matrices, as well as being responsible for updating them.
+
+SceneManager creates the intial scene at the moment.
 
 
 ### Journal
@@ -174,4 +178,14 @@ Big refactor. Moved every rendering part into its own class, seperated som respo
 - Architectural overhaul of VulkanEngine
 - Expanded scene class resposibilities
 - Dirty flags to transform and camera
-####
+#### ---------------------------------- 
+
+#### 29/07 - 2026
+Material buffer up and running. Started working on asset loading system, as well as seperated some responsibilites.
+#### Todays work
+- Material buffer
+- SceneManager
+- AssetLoader (preliminary)
+#### ---------------------------------- 
+
+

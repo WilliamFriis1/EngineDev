@@ -55,8 +55,9 @@ void VulkanEngine::vulkanInit()
 
 	transferManager.create(device, commandPool.get(), graphicsQueue);
 	resourceManager.create(physicalDevice, device, transferManager);
+	sceneManager.create(physicalDevice, device, transferManager);
 
-	renderer.create(physicalDevice, device, &swapchain, commandPool, graphicsQueue, presentQueue, 2);
+	renderer.create(physicalDevice, device, &swapchain, commandPool, graphicsQueue, presentQueue, 2, 2);
 }
 
 void VulkanEngine::cleanupGlfw()
@@ -387,10 +388,11 @@ void VulkanEngine::run()
 	{
 		glfwPollEvents();
 
-		resourceManager.getScene().buildRenderQueue(renderQueue);
-		resourceManager.getScene().buildObjectBuffer(sceneObjs);
+		sceneManager.getScene().buildRenderQueue(renderQueue);
+		sceneManager.getScene().buildObjectBuffer(sceneObjs);
+		sceneManager.getScene().buildMaterialBuffer(materials);
 
-		if (renderer.drawFrame(renderQueue, sceneObjs, *resourceManager.getScene().activeCamera) == Renderer::DRAW_FAIL || isFramebufferResized)
+		if (renderer.drawFrame(renderQueue, sceneObjs, materials, *sceneManager.getScene().activeCamera) == Renderer::DRAW_FAIL || isFramebufferResized)
 		{
 			recreateSwapChain();
 		}

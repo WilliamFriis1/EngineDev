@@ -4,6 +4,7 @@
 #include "Scene/entity.h"
 #include "Engine/Rendering/renderQueue.h"
 #include "Engine/Rendering/Graphics/RenderingTypes/objectData.h"
+#include "Engine/Rendering/Graphics/RenderingTypes/materialData.h"
 
 #include <vector>
 class Scene
@@ -16,4 +17,6 @@ public:
 	void buildRenderQueue(RenderQueue& queue);
 
 	void buildObjectBuffer(std::vector<ObjectData>& objs);
+
+	void buildMaterialBuffer(std::vector<MaterialData>& materials);
 };

@@ -31,8 +31,11 @@ private:
 	SyncManager syncManager{};
 	CommandBufferManager commandBufferManager{};
 
-	UniformBuffer uniformBuffer{};
-	StorageBuffer storageBuffer{};
+	UniformBuffer cameraBuffer{};
+	StorageBuffer objectBuffer{};
+	StorageBuffer materialBuffer{};
+
+	std::vector<StorageBuffer> storageBuffers;
 
 	uint32_t currentFrame = 0;
 
@@ -44,7 +47,7 @@ private:
 	VkQueue presentQueue;
 
 
-	void record(uint32_t imageIndex, const RenderQueue& renderQueue, const std::vector<ObjectData>& objs, const Camera& camera);
+	void record(uint32_t imageIndex, const RenderQueue& renderQueue, const std::vector<ObjectData>& objs, const std::vector<MaterialData>& materials, const Camera& camera);
 public:
 
 	enum DrawStatus
@@ -53,9 +56,9 @@ public:
 		DRAW_FAIL
 	};
 
-	void create(VkPhysicalDevice physicalDevice, VkDevice device, Swapchain* swapChain, const CommandPool& commandPool, VkQueue graphicsQueue, VkQueue presentQueue, uint32_t maxObjects);
+	void create(VkPhysicalDevice physicalDevice, VkDevice device, Swapchain* swapChain, const CommandPool& commandPool, VkQueue graphicsQueue, VkQueue presentQueue, uint32_t maxObjects, uint32_t maxMaterials);
 	void cleanup();
 	void createSwapchainResources();
 	void destroySwapchainResources();
-	DrawStatus drawFrame(const RenderQueue& renderQueue, const std::vector<ObjectData>& objs, const Camera& camera);
+	DrawStatus drawFrame(const RenderQueue& renderQueue, const std::vector<ObjectData>& objs, const std::vector<MaterialData>& materials, const Camera& camera);
 };

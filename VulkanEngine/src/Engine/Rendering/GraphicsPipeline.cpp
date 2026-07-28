@@ -1,37 +1,5 @@
 #include "GraphicsPipeline.h"
 
-std::vector<char> GraphicsPipeline::readFile(const std::string& filename)
-{
-    std::ifstream file(filename, std::ios::ate | std::ios::binary);
-
-    if (!file.is_open())
-        throw std::runtime_error("Failed to open shader file: " + filename);
-
-    size_t fileSize = (size_t)file.tellg();
-    std::vector<char> buffer(fileSize);
-
-    file.seekg(0);
-    file.read(buffer.data(), fileSize);
-
-    file.close();
-    return buffer;
-}
-
-VkShaderModule GraphicsPipeline::createShaderModule(VkDevice device, const std::vector<char>& code)
-{
-    VkShaderModuleCreateInfo createInfo{};
-
-    createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    createInfo.codeSize = code.size();
-    createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
-
-    VkShaderModule shaderModule;
-    if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
-        throw std::runtime_error("Failed to create shader module");
-
-    return shaderModule;
-}
-
 VkPipeline GraphicsPipeline::get() const
 {
     return graphicsPipeline;
@@ -62,11 +30,11 @@ void GraphicsPipeline::create(VkDevice device, VkExtent2D extent, VkRenderPass r
     if (vkCreatePipelineLayout(device, &layoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
         throw std::runtime_error("Failed to create pipeline layout");
 
-    auto vertShaderCode = readFile(AssetManager::getAssetPath("shaders/bin/triangle.vert.spv"));
-    auto fragShaderCode = readFile(AssetManager::getAssetPath("shaders/bin/triangle.frag.spv"));
+    auto vertShaderCode = assetLoader.readFile(AssetManager::getAssetPath("shaders/bin/triangle.vert.spv"));
+    auto fragShaderCode = assetLoader.readFile(AssetManager::getAssetPath("shaders/bin/triangle.frag.spv"));
 
-    VkShaderModule vertShaderModule = createShaderModule(device, vertShaderCode);
-    VkShaderModule fragShaderModule = createShaderModule(device, fragShaderCode);
+    VkShaderModule vertShaderModule = assetLoader.createShaderModule(device, vertShaderCode);
+    VkShaderModule fragShaderModule = assetLoader.createShaderModule(device, fragShaderCode);
 
     VkPipelineShaderStageCreateInfo vertStageInfo{};
 
