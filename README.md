@@ -188,4 +188,12 @@ Material buffer up and running. Started working on asset loading system, as well
 - AssetLoader (preliminary)
 #### ---------------------------------- 
 
+#### 13/10 - 2026
+After a long break due to other responsibilites, I've began implementing parser for obj files, as well as changing the architecture somewhat.
+#### Todays work
+- AssetLoader is now static, and in charge of all file reading.
+- Writing a .obj file parser from scratch, not nearly finished. 
+#### ---------------------------------- 
+
+
 

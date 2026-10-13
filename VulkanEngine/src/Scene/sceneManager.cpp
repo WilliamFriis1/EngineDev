@@ -2,6 +2,8 @@
 
 void SceneManager::create(VkPhysicalDevice physicalDevice, VkDevice device, TransferManager& transferManager)
 {
+
+    auto verts = AssetLoader::readObj(AssetManager::getAssetPath("models/cube.obj"));
     //TEMPORARY
     vertices =
     {

@@ -30,11 +30,11 @@ void GraphicsPipeline::create(VkDevice device, VkExtent2D extent, VkRenderPass r
     if (vkCreatePipelineLayout(device, &layoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
         throw std::runtime_error("Failed to create pipeline layout");
 
-    auto vertShaderCode = assetLoader.readFile(AssetManager::getAssetPath("shaders/bin/triangle.vert.spv"));
-    auto fragShaderCode = assetLoader.readFile(AssetManager::getAssetPath("shaders/bin/triangle.frag.spv"));
+    auto vertShaderCode = AssetLoader::readFile(AssetManager::getAssetPath("shaders/bin/triangle.vert.spv"));
+    auto fragShaderCode = AssetLoader::readFile(AssetManager::getAssetPath("shaders/bin/triangle.frag.spv"));
 
-    VkShaderModule vertShaderModule = assetLoader.createShaderModule(device, vertShaderCode);
-    VkShaderModule fragShaderModule = assetLoader.createShaderModule(device, fragShaderCode);
+    VkShaderModule vertShaderModule = AssetLoader::createShaderModule(device, vertShaderCode);
+    VkShaderModule fragShaderModule = AssetLoader::createShaderModule(device, fragShaderCode);
 
     VkPipelineShaderStageCreateInfo vertStageInfo{};
 

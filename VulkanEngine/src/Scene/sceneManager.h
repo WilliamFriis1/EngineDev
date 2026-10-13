@@ -1,11 +1,14 @@
 #pragma once
 
 #include "Engine/Rendering/transferManager.h"
+#include "Utility/assetLoader.h"
 #include "scene.h"
 
 #include <vulkan/vulkan.h>
 class SceneManager
 {
+
+private:
 	std::vector<Vertex> vertices;
 	std::vector<Vertex> vertices1;
 

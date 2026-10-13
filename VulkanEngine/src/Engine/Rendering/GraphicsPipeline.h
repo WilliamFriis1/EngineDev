@@ -9,9 +9,6 @@
 class GraphicsPipeline
 {
 private:
-
-	AssetLoader assetLoader{};
-
 	VkPipeline graphicsPipeline = VK_NULL_HANDLE;
 	VkPipelineLayout pipelineLayout = VK_NULL_HANDLE;
 
